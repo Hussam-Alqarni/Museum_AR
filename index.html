@@ -16,13 +16,14 @@
 
   <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/aframe/build/aframe-ar.js"></script>
+  <!-- إضافة مكتبة aframe-extras للسحب والتكبير -->
+  <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
 
   <script type="module"
     src="https://unpkg.com/@google/model-viewer@3.4.0/dist/model-viewer.min.js">
   </script>
 
   <style>
-
     :root {
       --bg: #0c1410;
       --card: #121b17;
@@ -44,13 +45,11 @@
     }
 
     /* شاشة التحميل */
-
     #loading-screen {
       position: fixed;
       inset: 0;
       z-index: 9999;
-      background:
-        radial-gradient(circle at top, #17352b 0%, #0c1410 70%);
+      background: radial-gradient(circle at top, #17352b 0%, #0c1410 70%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -71,14 +70,11 @@
       border-top-color: #d4af37;
       animation: spin 1s linear infinite;
       margin-bottom: 20px;
-      box-shadow:
-        0 0 35px rgba(212,175,55,.35);
+      box-shadow: 0 0 35px rgba(212,175,55,.35);
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+      to { transform: rotate(360deg); }
     }
 
     #loading-screen p {
@@ -88,7 +84,6 @@
     }
 
     /* الواجهة */
-
     #welcome {
       position: fixed;
       inset: 0;
@@ -98,9 +93,7 @@
       align-items: center;
       padding: 24px;
       overflow-y: auto;
-
-      background:
-        radial-gradient(120% 80% at 50% 0%, #143028 0%, var(--bg) 55%);
+      background: radial-gradient(120% 80% at 50% 0%, #143028 0%, var(--bg) 55%);
     }
 
     #welcome h1 {
@@ -124,13 +117,9 @@
       border-radius: 18px;
       padding: 20px;
       margin-top: 20px;
-
       border: 1px solid rgba(255,255,255,.08);
-
       backdrop-filter: blur(14px);
-
-      box-shadow:
-        0 15px 40px rgba(0,0,0,.35);
+      box-shadow: 0 15px 40px rgba(0,0,0,.35);
     }
 
     .markers-row {
@@ -164,29 +153,18 @@
       cursor: pointer;
       font-size: 1rem;
       font-weight: bold;
-
-      background:
-        linear-gradient(135deg, #e8c547, #8f7024);
-
+      background: linear-gradient(135deg, #e8c547, #8f7024);
       color: #0d1117;
-
-      transition:
-        transform .2s ease,
-        box-shadow .2s ease;
-
-      box-shadow:
-        0 10px 30px rgba(212,175,55,.3);
+      transition: transform .2s ease, box-shadow .2s ease;
+      box-shadow: 0 10px 30px rgba(212,175,55,.3);
     }
 
     #btn-start:hover {
       transform: translateY(-2px);
-
-      box-shadow:
-        0 14px 40px rgba(212,175,55,.45);
+      box-shadow: 0 14px 40px rgba(212,175,55,.45);
     }
 
     /* واجهة AR */
-
     #ar-ui {
       position: fixed;
       inset: 0;
@@ -210,22 +188,16 @@
     .step-chip {
       background: rgba(0,0,0,.45);
       border: 1px solid rgba(255,255,255,.08);
-
       padding: 10px 18px;
-
       border-radius: 999px;
-
       backdrop-filter: blur(10px);
-
       font-weight: 700;
-
-      box-shadow:
-        0 10px 35px rgba(0,0,0,.35);
+      box-shadow: 0 10px 35px rgba(0,0,0,.35);
     }
 
     #hint-scan {
       position: absolute;
-      bottom: 120px;
+      bottom: 220px;
       left: 0;
       right: 0;
       text-align: center;
@@ -239,26 +211,13 @@
       bottom: 0;
       left: 0;
       right: 0;
-
       padding: 20px;
-
-      background:
-        linear-gradient(
-          180deg,
-          transparent,
-          rgba(13,17,23,.96) 12%
-        );
-
+      background: linear-gradient(180deg, transparent, rgba(13,17,23,.96) 12%);
       transform: translateY(100%);
-
       transition: transform .35s ease;
-
       backdrop-filter: blur(14px);
-
       border-top: 1px solid rgba(255,255,255,.08);
-
-      box-shadow:
-        0 -20px 60px rgba(0,0,0,.4);
+      box-shadow: 0 -20px 60px rgba(0,0,0,.4);
     }
 
     #panel.visible {
@@ -277,34 +236,26 @@
 
     #btn-close {
       width: 100%;
-      margin-top: 20px;
+      margin-top: 10px;
       padding: 14px;
       border: none;
       border-radius: 12px;
       cursor: pointer;
       font-weight: bold;
-
-      background:
-        linear-gradient(135deg,#e8c547,#8f7024);
-
+      background: linear-gradient(135deg,#e8c547,#8f7024);
       color: #111;
     }
 
     #done-screen {
       display: none;
-
       position: fixed;
       inset: 0;
       z-index: 100;
-
       background: rgba(0,0,0,.85);
-
       backdrop-filter: blur(12px);
-
       align-items: center;
       justify-content: center;
       flex-direction: column;
-
       text-align: center;
       padding: 30px;
     }
@@ -327,19 +278,12 @@
 
     #btn-reload {
       margin-top: 24px;
-
       padding: 14px 30px;
-
       border: none;
       border-radius: 999px;
-
       cursor: pointer;
-
       font-weight: bold;
-
-      background:
-        linear-gradient(135deg,#e8c547,#8f7024);
-
+      background: linear-gradient(135deg,#e8c547,#8f7024);
       color: #111;
     }
 
@@ -347,34 +291,70 @@
       width: 100%;
       height: 100%;
     }
-
   </style>
+
+  <script>
+    // إضافة مكون التحكم باللمس والتكبير
+    AFRAME.registerComponent('gesture-handler', {
+      init: function () {
+        this.el.sceneEl.addEventListener('touchstart', this.onStart.bind(this));
+        this.el.sceneEl.addEventListener('touchmove', this.onMove.bind(this));
+        this.el.sceneEl.addEventListener('touchend', this.onEnd.bind(this));
+        this.scale = 1;
+        this.initialDistance = null;
+        this.initialScale = null;
+      },
+      onStart: function (e) {
+        if (e.touches.length === 2) {
+          this.initialDistance = this.getDistance(e.touches[0], e.touches[1]);
+          this.initialScale = this.el.object3D.scale.clone();
+        }
+      },
+      onMove: function (e) {
+        if (e.touches.length === 2) {
+          let newDistance = this.getDistance(e.touches[0], e.touches[1]);
+          let scaleFactor = newDistance / this.initialDistance;
+          this.el.object3D.scale.set(
+            this.initialScale.x * scaleFactor,
+            this.initialScale.y * scaleFactor,
+            this.initialScale.z * scaleFactor
+          );
+        }
+      },
+      onEnd: function () {},
+      getDistance: function (a, b) {
+        let dx = a.pageX - b.pageX;
+        let dy = a.pageY - b.pageY;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+    });
+
+    // دالة إغلاق المتحف المخصص
+    function closeMuseum() {
+      document.getElementById("museum-mode").style.display = "none";
+      document.getElementById("done-screen").classList.remove("visible");
+    }
+  </script>
 </head>
 
 <body>
 
   <!-- شاشة التحميل -->
-
   <div id="loading-screen">
     <div class="loader-ring"></div>
     <p>جاري تحميل التجربة المتحفية...</p>
   </div>
 
   <!-- الصفحة الرئيسية -->
-
   <section id="welcome">
-
     <h1>متحف الواقع المعزز للثقافة السعودية</h1>
-
     <p class="lead">
       تجربة رقمية تفاعلية تستعرض عناصر من التراث السعودي
       باستخدام تقنية الواقع المعزز والقطع ثلاثية الأبعاد.
     </p>
 
     <div class="card">
-
       <h2>طريقة الاستخدام</h2>
-
       <ol>
         <li>افتح الكاميرا عبر زر البداية.</li>
         <li>وجّه الكاميرا إلى الماركر المناسب.</li>
@@ -382,72 +362,87 @@
       </ol>
 
       <div class="markers-row">
-
         <figure>
-          <img src="markers/hiro.png">
+          <img src="markers/hiro.png" alt="hiro">
           <figcaption>الخيمة</figcaption>
         </figure>
-
         <figure>
-          <img src="markers/kanji.png">
+          <img src="markers/kanji.png" alt="kanji">
           <figcaption>الدلة</figcaption>
         </figure>
-
         <figure>
-          <img src="markers/pattern-letterA.png">
+          <img src="markers/pattern-letterA.png" alt="letterA">
           <figcaption>السيف</figcaption>
         </figure>
-
       </div>
-
     </div>
 
-    <button id="btn-start">
-      ابدأ الزيارة
-    </button>
-
+    <button id="btn-start">ابدأ الزيارة</button>
   </section>
 
   <!-- واجهة AR -->
-
   <div id="ar-ui" hidden>
-
     <div id="step-badge"></div>
-
     <div id="hint-scan"></div>
 
     <div id="panel">
-
       <h3 id="panel-title"></h3>
-
       <p id="panel-body"></p>
+
+      <!-- زر الاستخدام في الواقع المعزز -->
+      <button id="btn-ar-mode" style="
+        width:100%;
+        margin-top:10px;
+        padding:12px;
+        border-radius:10px;
+        border:none;
+        background:#d4af37;
+        font-weight:bold;
+        cursor:pointer;">
+        استخدام في الواقع المعزز
+      </button>
 
       <button id="btn-close">
         إغلاق والانتقال للقطعة التالية
       </button>
-
     </div>
-
   </div>
 
   <!-- شاشة النهاية -->
-
   <div id="done-screen">
-
     <h2>شكراً لزيارتك</h2>
-
     <p>
       اكتملت جولتك داخل متحف الواقع المعزز للثقافة السعودية.
     </p>
+    <button id="btn-reload">إعادة الجولة</button>
+  </div>
 
-    <button id="btn-reload">
-      إعادة الجولة
+  <!-- المتحف الخاص بي -->
+  <div id="museum-mode" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#0c1410;
+    z-index:999;
+    color:white;
+    padding:20px;
+  ">
+    <h2 style="color:#d4af37">أنشئ متحفك الخاص</h2>
+    <p>اختر أي قطعة لإضافتها إلى عالمك</p>
+    <div id="museum-buttons" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+    <button onclick="closeMuseum()" style="
+      margin-top:20px;
+      padding:12px;
+      width:100%;
+      border:none;
+      border-radius:10px;
+      background:#d4af37;
+      font-weight:bold;">
+      إغلاق
     </button>
-
   </div>
 
   <!-- مشهد AR -->
-
   <a-scene
     embedded
     vr-mode-ui="enabled: false"
@@ -457,71 +452,41 @@
     style="position:fixed;inset:0;"
     id="ar-scene"
   >
-
     <!-- إضاءة محسنة -->
-
-    <a-entity
-      light="type: ambient; color: #ffffff; intensity: 1.3">
-    </a-entity>
-
-    <a-entity
-      light="type: directional; color: #ffffff; intensity: 1.2"
-      position="1 2 1">
-    </a-entity>
-
-    <a-entity
-      light="type: directional; color: #ffe8b0; intensity: 0.7"
-      position="-1 1 0">
-    </a-entity>
-
-    <a-entity
-      light="type: point; intensity: 0.5; distance: 10; color: #d4af37"
-      position="0 2 0">
-    </a-entity>
+    <a-entity light="type: ambient; color: #ffffff; intensity: 1.3"></a-entity>
+    <a-entity light="type: directional; color: #ffffff; intensity: 1.2" position="1 2 1"></a-entity>
+    <a-entity light="type: directional; color: #ffe8b0; intensity: 0.7" position="-1 1 0"></a-entity>
+    <a-entity light="type: point; intensity: 0.5; distance: 10; color: #d4af37" position="0 2 0"></a-entity>
 
     <!-- الماركرات -->
-
-    <a-marker
-      id="marker-0"
-      type="pattern"
-      url="markers/patt.hiro"
-      emitevents="true">
-    </a-marker>
-
-    <a-marker
-      id="marker-1"
-      type="pattern"
-      url="markers/patt.kanji"
-      emitevents="true">
-    </a-marker>
-
-    <a-marker
-      id="marker-2"
-      type="pattern"
-      url="markers/pattern-letterA.patt"
-      emitevents="true">
-    </a-marker>
+    <a-marker id="marker-0" type="pattern" url="markers/patt.hiro" emitevents="true"></a-marker>
+    <a-marker id="marker-1" type="pattern" url="markers/patt.kanji" emitevents="true"></a-marker>
+    <a-marker id="marker-2" type="pattern" url="markers/pattern-letterA.patt" emitevents="true"></a-marker>
 
     <!-- المجسم الثابت -->
-
     <a-entity id="persistent-holder" visible="false">
-
+      <!-- المجسم مع التعديلات الجديدة للتكبير والإحداثيات -->
       <a-entity
-        id="persistent-model">
+        id="persistent-model"
+        gesture-handler
+        scale="1 1 1"
+        position="0 0 0">
       </a-entity>
-
     </a-entity>
 
-    <a-entity camera></a-entity>
+    <!-- كاميرا المشهد -->
+    <a-entity
+      id="camera"
+      camera
+      look-controls="enabled: false"
+      wasd-controls="enabled: false">
+    </a-entity>
 
   </a-scene>
 
   <script>
-
     (function () {
-
       const STEPS = [
-
         {
           markerIndex: 0,
           title: "الخيمة العربية",
@@ -529,7 +494,6 @@
           scale: "0.5 0.5 0.5",
           modelSrc: "models/arabic_tent.glb"
         },
-
         {
           markerIndex: 1,
           title: "الدلة السعودية",
@@ -537,7 +501,6 @@
           scale: "0.2 0.2 0.2",
           modelSrc: "models/saudi_dallah.glb"
         },
-
         {
           markerIndex: 2,
           title: "السيف العربي",
@@ -545,58 +508,34 @@
           scale: "0.45 0.45 0.45",
           modelSrc: "models/arabic_sword.glb"
         }
-
       ];
 
       let currentStep = 0;
-
       let locked = false;
 
       const welcome = document.getElementById("welcome");
       const arUi = document.getElementById("ar-ui");
-
       const panel = document.getElementById("panel");
-
-      const panelTitle =
-        document.getElementById("panel-title");
-
-      const panelBody =
-        document.getElementById("panel-body");
-
-      const stepBadge =
-        document.getElementById("step-badge");
-
-      const hintScan =
-        document.getElementById("hint-scan");
-
-      const doneScreen =
-        document.getElementById("done-screen");
-
-      const pModel =
-        document.getElementById("persistent-model");
-
-      const holder =
-        document.getElementById("persistent-holder");
+      const panelTitle = document.getElementById("panel-title");
+      const panelBody = document.getElementById("panel-body");
+      const stepBadge = document.getElementById("step-badge");
+      const hintScan = document.getElementById("hint-scan");
+      const doneScreen = document.getElementById("done-screen");
+      const pModel = document.getElementById("persistent-model");
+      const holder = document.getElementById("persistent-holder");
 
       function setHint() {
-
         if (currentStep >= STEPS.length) return;
-
         stepBadge.innerHTML =
           `<div class="step-chip">
             القطعة ${currentStep + 1} / ${STEPS.length}
           </div>`;
-
-        hintScan.textContent =
-          "وجّه الكاميرا نحو الماركر لإظهار المجسم.";
+        hintScan.textContent = "وجّه الكاميرا نحو الماركر لإظهار المجسم.";
       }
 
       function showPanel(step) {
-
         panelTitle.textContent = step.title;
-
         panelBody.textContent = step.body;
-
         panel.classList.add("visible");
       }
 
@@ -604,82 +543,52 @@
         panel.classList.remove("visible");
       }
 
+      // دالة ظهور الماركر المُحدثة
       function onMarkerFound(index) {
-
         if (locked) return;
-
         if (index !== currentStep) return;
 
         const step = STEPS[currentStep];
-
         locked = true;
 
         holder.setAttribute("visible", true);
+        pModel.setAttribute("gltf-model", step.modelSrc);
+        pModel.setAttribute("scale", step.scale);
 
-        holder.setAttribute("scale",
-          "0.001 0.001 0.001");
-
-        pModel.setAttribute(
-          "gltf-model",
-          step.modelSrc
-        );
-
-        pModel.setAttribute(
-          "scale",
-          step.scale
-        );
-
-        pModel.setAttribute(
-          "animation__rotate",
-          {
-            property: "rotation",
-            to: "0 360 0",
-            loop: true,
-            dur: 18000,
-            easing: "linear"
-          }
-        );
-
-        setTimeout(() => {
-
-          holder.setAttribute("animation", {
-
-            property: "scale",
-
-            from: "0.001 0.001 0.001",
-
-            to: "1 1 1",
-
-            dur: 900,
-
-            easing: "easeOutElastic"
-
-          });
-
-        }, 50);
+        // تثبيت الحجم الابتدائي
+        pModel.object3D.position.set(0, 0, 0);
 
         showPanel(step);
-
-        hintScan.textContent =
-          "يمكنك إبعاد الماركر — المجسم مثبت.";
-
+        hintScan.textContent = "يمكنك سحب المجسم أو تكبيره بإصبعين";
       }
 
       function onClose() {
-
         hidePanel();
-
         holder.setAttribute("visible", false);
-
         pModel.removeAttribute("gltf-model");
-
         currentStep++;
-
         locked = false;
 
         if (currentStep >= STEPS.length) {
-
           doneScreen.classList.add("visible");
+          
+          setTimeout(() => {
+            // التحقق من عدم تكرار إضافة الزر إذا تم الضغط أكثر من مرة
+            if (!document.getElementById("btn-custom-museum")) {
+              const btn = document.createElement("button");
+              btn.id = "btn-custom-museum";
+              btn.innerText = "إنشاء متحفك الخاص";
+              btn.style.padding = "14px";
+              btn.style.marginTop = "20px";
+              btn.style.border = "none";
+              btn.style.borderRadius = "999px";
+              btn.style.background = "#d4af37";
+              btn.style.fontWeight = "bold";
+              btn.style.cursor = "pointer";
+              btn.onclick = openMuseum;
+              doneScreen.appendChild(btn);
+            }
+          }, 500);
 
           return;
         }
@@ -687,58 +596,70 @@
         setHint();
       }
 
-      document
-        .getElementById("btn-start")
-        .addEventListener("click", () => {
+      // دوال المتحف المخصص
+      function openMuseum() {
+        document.getElementById("museum-mode").style.display = "block";
+        const container = document.getElementById("museum-buttons");
+        container.innerHTML = "";
 
-          welcome.style.display = "none";
-
-          arUi.hidden = false;
-
-          setHint();
-
+        STEPS.forEach((step, i) => {
+          const btn = document.createElement("button");
+          btn.innerText = step.title;
+          btn.style.padding = "12px";
+          btn.style.borderRadius = "10px";
+          btn.style.border = "none";
+          btn.style.cursor = "pointer";
+          btn.style.background = "#1a1a1a";
+          btn.style.color = "white";
+          btn.onclick = () => spawnInAR(step);
+          container.appendChild(btn);
         });
+      }
 
-      document
-        .getElementById("btn-close")
-        .addEventListener("click", onClose);
+      function spawnInAR(step) {
+        holder.setAttribute("visible", true);
+        pModel.setAttribute("gltf-model", step.modelSrc);
+        pModel.setAttribute("scale", step.scale);
+        closeMuseum(); // لإغلاق القائمة والعودة لمشاهدة المجسم
+      }
 
-      document
-        .getElementById("btn-reload")
-        .addEventListener("click", () => {
+      // مستمعي الأحداث
+      document.getElementById("btn-start").addEventListener("click", () => {
+        welcome.style.display = "none";
+        arUi.hidden = false;
+        setHint();
+      });
 
-          location.reload();
+      document.getElementById("btn-close").addEventListener("click", onClose);
 
-        });
+      document.getElementById("btn-reload").addEventListener("click", () => {
+        location.reload();
+      });
+
+      document.getElementById("btn-ar-mode").addEventListener("click", () => {
+        if (navigator.xr) {
+          alert("سيتم فتح وضع الواقع المعزز الحقيقي (AR WebXR)");
+        } else {
+          alert("الجهاز لا يدعم AR المباشر، سيتم استخدام وضع العرض فقط");
+        }
+      });
 
       for (let i = 0; i < STEPS.length; i++) {
-
-        const marker =
-          document.getElementById("marker-" + i);
-
-        marker.addEventListener("markerFound", () => {
-
-          onMarkerFound(i);
-
-        });
-
+        const marker = document.getElementById("marker-" + i);
+        if(marker) {
+          marker.addEventListener("markerFound", () => {
+            onMarkerFound(i);
+          });
+        }
       }
 
       window.addEventListener("load", () => {
-
         setTimeout(() => {
-
-          document
-            .getElementById("loading-screen")
-            .classList.add("hidden");
-
+          document.getElementById("loading-screen").classList.add("hidden");
         }, 1200);
-
       });
 
     })();
-
   </script>
-
 </body>
 </html>
