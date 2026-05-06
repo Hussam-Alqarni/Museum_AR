@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
   <meta name="theme-color" content="#0c1410">
   <meta name="apple-mobile-web-app-capable" content="yes">
 
@@ -11,17 +10,14 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
 
+  <!-- مكتبات A-Frame و AR.js -->
   <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/aframe/build/aframe-ar.js"></script>
-  <!-- إضافة مكتبة aframe-extras للسحب والتكبير -->
-  <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
-
-  <script type="module"
-    src="https://unpkg.com/@google/model-viewer@3.4.0/dist/model-viewer.min.js">
-  </script>
+  
+  <!-- مكتبة Model-Viewer لعرض المجسمات في الشاشة الفارغة بـ 360 درجة -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer@3.4.0/dist/model-viewer.min.js"></script>
 
   <style>
     :root {
@@ -32,9 +28,7 @@
       --muted: #9cb0a8;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -46,294 +40,112 @@
 
     /* شاشة التحميل */
     #loading-screen {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
+      position: fixed; inset: 0; z-index: 9999;
       background: radial-gradient(circle at top, #17352b 0%, #0c1410 70%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       transition: opacity .5s ease;
     }
-
-    #loading-screen.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
+    #loading-screen.hidden { opacity: 0; pointer-events: none; }
     .loader-ring {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 6px solid rgba(255,255,255,.15);
-      border-top-color: #d4af37;
-      animation: spin 1s linear infinite;
-      margin-bottom: 20px;
-      box-shadow: 0 0 35px rgba(212,175,55,.35);
+      width: 80px; height: 80px; border-radius: 50%; border: 6px solid rgba(255,255,255,.15);
+      border-top-color: var(--accent); animation: spin 1s linear infinite; margin-bottom: 20px;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    #loading-screen p {
-      font-size: 1rem;
-      color: white;
-      letter-spacing: .5px;
-    }
-
-    /* الواجهة */
+    /* شاشة الترحيب */
     #welcome {
-      position: fixed;
-      inset: 0;
-      z-index: 20;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 24px;
-      overflow-y: auto;
+      position: fixed; inset: 0; z-index: 20; display: flex; flex-direction: column;
+      align-items: center; padding: 24px; overflow-y: auto;
       background: radial-gradient(120% 80% at 50% 0%, #143028 0%, var(--bg) 55%);
     }
-
-    #welcome h1 {
-      color: var(--accent);
-      font-size: 2rem;
-      margin-bottom: 10px;
-      text-align: center;
-    }
-
-    #welcome .lead {
-      max-width: 700px;
-      line-height: 1.9;
-      text-align: center;
-      color: var(--muted);
-    }
-
+    #welcome h1 { color: var(--accent); font-size: 2rem; text-align: center; }
     .card {
-      max-width: 650px;
-      width: 100%;
-      background: rgba(18,27,23,.95);
-      border-radius: 18px;
-      padding: 20px;
-      margin-top: 20px;
-      border: 1px solid rgba(255,255,255,.08);
-      backdrop-filter: blur(14px);
-      box-shadow: 0 15px 40px rgba(0,0,0,.35);
+      max-width: 650px; width: 100%; background: rgba(18,27,23,.95); border-radius: 18px;
+      padding: 20px; margin-top: 20px; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 15px 40px rgba(0,0,0,.35);
+    }
+    .markers-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+    .markers-row img { width: 90px; height: 90px; border-radius: 10px; background: white; }
+    .btn-gold {
+      margin-top: 24px; padding: 15px 34px; border: none; border-radius: 999px;
+      cursor: pointer; font-size: 1rem; font-weight: bold; background: linear-gradient(135deg, #e8c547, #8f7024);
+      color: #0d1117; box-shadow: 0 10px 30px rgba(212,175,55,.3); transition: transform 0.2s;
     }
 
-    .markers-row {
-      display: flex;
-      gap: 14px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 18px;
+    /* واجهة أثناء المسح */
+    #scan-ui {
+      position: fixed; inset: 0; z-index: 10; pointer-events: none; display: none; flex-direction: column; align-items: center;
     }
-
-    .markers-row figure {
-      text-align: center;
-      color: var(--muted);
-      font-size: .8rem;
-    }
-
-    .markers-row img {
-      width: 90px;
-      height: 90px;
-      object-fit: contain;
-      border-radius: 10px;
-      background: white;
-      border: 1px solid rgba(255,255,255,.1);
-    }
-
-    #btn-start {
-      margin-top: 24px;
-      padding: 15px 34px;
-      border: none;
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: bold;
-      background: linear-gradient(135deg, #e8c547, #8f7024);
-      color: #0d1117;
-      transition: transform .2s ease, box-shadow .2s ease;
-      box-shadow: 0 10px 30px rgba(212,175,55,.3);
-    }
-
-    #btn-start:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 40px rgba(212,175,55,.45);
-    }
-
-    /* واجهة AR */
-    #ar-ui {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    #ar-ui * {
-      pointer-events: auto;
-    }
-
     #step-badge {
-      position: absolute;
-      top: 12px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
+      margin-top: 20px; background: rgba(0,0,0,.6); padding: 10px 20px; border-radius: 999px;
+      backdrop-filter: blur(10px); font-weight: bold; border: 1px solid rgba(255,255,255,.1); color: white;
     }
+    #hint-scan { position: absolute; bottom: 40px; text-align: center; color: white; text-shadow: 0 2px 6px black; }
 
-    .step-chip {
-      background: rgba(0,0,0,.45);
-      border: 1px solid rgba(255,255,255,.08);
-      padding: 10px 18px;
-      border-radius: 999px;
-      backdrop-filter: blur(10px);
-      font-weight: 700;
-      box-shadow: 0 10px 35px rgba(0,0,0,.35);
+    /* شاشة عرض المجسم 360 (الصفحة الفارغة) */
+    #model-360-view {
+      position: fixed; inset: 0; z-index: 50; display: none; flex-direction: column;
+      background: radial-gradient(circle, #1a2921 0%, #0c1410 100%);
     }
-
-    #hint-scan {
-      position: absolute;
-      bottom: 220px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      color: white;
-      font-size: .95rem;
-      text-shadow: 0 2px 6px black;
+    model-viewer { width: 100%; flex: 1; outline: none; }
+    .info-panel {
+      background: rgba(18,27,23,.95); padding: 25px; border-top: 1px solid rgba(255,255,255,.08);
+      border-radius: 20px 20px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,.5);
     }
+    .info-panel h3 { color: var(--accent); margin: 0 0 10px 0; font-size: 1.5rem; }
+    .info-panel p { color: #e5e5e5; line-height: 1.8; margin-bottom: 20px; }
+    .btn-block { width: 100%; padding: 15px; border-radius: 12px; font-size: 1.1rem; }
 
-    #panel {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 20px;
-      background: linear-gradient(180deg, transparent, rgba(13,17,23,.96) 12%);
-      transform: translateY(100%);
-      transition: transform .35s ease;
-      backdrop-filter: blur(14px);
-      border-top: 1px solid rgba(255,255,255,.08);
-      box-shadow: 0 -20px 60px rgba(0,0,0,.4);
-    }
-
-    #panel.visible {
-      transform: translateY(0);
-    }
-
-    #panel h3 {
-      color: var(--accent);
-      margin-bottom: 8px;
-    }
-
-    #panel p {
-      line-height: 1.9;
-      color: #e5e5e5;
-    }
-
-    #btn-close {
-      width: 100%;
-      margin-top: 10px;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: bold;
-      background: linear-gradient(135deg,#e8c547,#8f7024);
-      color: #111;
-    }
-
+    /* شاشة النهاية */
     #done-screen {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      background: rgba(0,0,0,.85);
-      backdrop-filter: blur(12px);
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      text-align: center;
-      padding: 30px;
+      position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.9);
+      display: none; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center;
     }
+    #done-screen h2 { color: var(--accent); font-size: 2rem; }
 
-    #done-screen.visible {
-      display: flex;
+    /* واجهة المتحف الخاص (AR) */
+    #museum-ui {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 60; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+      padding: 20px; display: none; flex-direction: column; pointer-events: none;
     }
-
-    #done-screen h2 {
-      color: var(--accent);
-      font-size: 2rem;
-      margin-bottom: 10px;
+    #museum-ui * { pointer-events: auto; }
+    .museum-title { text-align: center; color: var(--accent); margin-bottom: 15px; text-shadow: 0 2px 5px black; }
+    .museum-items { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+    .museum-btn {
+      flex: 0 0 auto; padding: 12px 20px; background: rgba(18,27,23,.8); border: 1px solid var(--accent);
+      color: white; border-radius: 10px; font-weight: bold; cursor: pointer; backdrop-filter: blur(5px);
     }
-
-    #done-screen p {
-      max-width: 500px;
-      line-height: 1.9;
-      color: #ddd;
-    }
-
-    #btn-reload {
-      margin-top: 24px;
-      padding: 14px 30px;
-      border: none;
-      border-radius: 999px;
-      cursor: pointer;
-      font-weight: bold;
-      background: linear-gradient(135deg,#e8c547,#8f7024);
-      color: #111;
-    }
-
-    a-scene {
-      width: 100%;
-      height: 100%;
-    }
+    .museum-btn:active { background: var(--accent); color: black; }
+    
   </style>
 
   <script>
-    // إضافة مكون التحكم باللمس والتكبير
-    AFRAME.registerComponent('gesture-handler', {
+    // مكون للتحكم بدوران كامل المتحف بإصبع واحد أثناء العرض
+    AFRAME.registerComponent('museum-controller', {
       init: function () {
-        this.el.sceneEl.addEventListener('touchstart', this.onStart.bind(this));
-        this.el.sceneEl.addEventListener('touchmove', this.onMove.bind(this));
-        this.el.sceneEl.addEventListener('touchend', this.onEnd.bind(this));
-        this.scale = 1;
-        this.initialDistance = null;
-        this.initialScale = null;
-      },
-      onStart: function (e) {
-        if (e.touches.length === 2) {
-          this.initialDistance = this.getDistance(e.touches[0], e.touches[1]);
-          this.initialScale = this.el.object3D.scale.clone();
-        }
-      },
-      onMove: function (e) {
-        if (e.touches.length === 2) {
-          let newDistance = this.getDistance(e.touches[0], e.touches[1]);
-          let scaleFactor = newDistance / this.initialDistance;
-          this.el.object3D.scale.set(
-            this.initialScale.x * scaleFactor,
-            this.initialScale.y * scaleFactor,
-            this.initialScale.z * scaleFactor
-          );
-        }
-      },
-      onEnd: function () {},
-      getDistance: function (a, b) {
-        let dx = a.pageX - b.pageX;
-        let dy = a.pageY - b.pageY;
-        return Math.sqrt(dx * dx + dy * dy);
+        this.container = document.getElementById("museum-container");
+        this.isDragging = false;
+        this.previousX = 0;
+
+        this.el.sceneEl.addEventListener('touchstart', (e) => {
+          if(window.appMode !== 'museum') return;
+          this.isDragging = true;
+          this.previousX = e.touches[0].pageX;
+        });
+
+        this.el.sceneEl.addEventListener('touchmove', (e) => {
+          if(!this.isDragging || window.appMode !== 'museum') return;
+          const deltaX = e.touches[0].pageX - this.previousX;
+          const rot = this.container.getAttribute('rotation');
+          // تدوير المتحف حول محوره (Y)
+          this.container.setAttribute('rotation', `0 ${rot.y + (deltaX * 0.4)} 0`);
+          this.previousX = e.touches[0].pageX;
+        });
+
+        this.el.sceneEl.addEventListener('touchend', () => {
+          this.isDragging = false;
+        });
       }
     });
-
-    // دالة إغلاق المتحف المخصص
-    function closeMuseum() {
-      document.getElementById("museum-mode").style.display = "none";
-      document.getElementById("done-screen").classList.remove("visible");
-    }
   </script>
 </head>
 
@@ -347,317 +159,205 @@
 
   <!-- الصفحة الرئيسية -->
   <section id="welcome">
-    <h1>متحف الواقع المعزز للثقافة السعودية</h1>
-    <p class="lead">
-      تجربة رقمية تفاعلية تستعرض عناصر من التراث السعودي
-      باستخدام تقنية الواقع المعزز والقطع ثلاثية الأبعاد.
-    </p>
-
+    <h1>متحف الواقع المعزز</h1>
+    <p style="text-align:center; color: var(--muted); line-height:1.8;">تجربة رقمية تستعرض التراث السعودي.</p>
     <div class="card">
-      <h2>طريقة الاستخدام</h2>
-      <ol>
-        <li>افتح الكاميرا عبر زر البداية.</li>
-        <li>وجّه الكاميرا إلى الماركر المناسب.</li>
-        <li>سيظهر المجسم بشكل ثلاثي الأبعاد.</li>
+      <h2 style="color:var(--accent);">طريقة الاستخدام</h2>
+      <ol style="line-height:2;">
+        <li>افتح الكاميرا وابحث عن الماركر.</li>
+        <li>سيظهر المجسم في صفحة خاصة حرة.</li>
+        <li>بعد الانتهاء من القطع، ستتمكن من بناء متحفك الخاص!</li>
       </ol>
-
       <div class="markers-row">
-        <figure>
-          <img src="markers/hiro.png" alt="hiro">
-          <figcaption>الخيمة</figcaption>
-        </figure>
-        <figure>
-          <img src="markers/kanji.png" alt="kanji">
-          <figcaption>الدلة</figcaption>
-        </figure>
-        <figure>
-          <img src="markers/pattern-letterA.png" alt="letterA">
-          <figcaption>السيف</figcaption>
-        </figure>
+        <img src="markers/hiro.png" alt="الخيمة">
+        <img src="markers/kanji.png" alt="الدلة">
+        <img src="markers/pattern-letterA.png" alt="السيف">
       </div>
     </div>
-
-    <button id="btn-start">ابدأ الزيارة</button>
+    <button id="btn-start" class="btn-gold">ابدأ الجولة</button>
   </section>
 
-  <!-- واجهة AR -->
-  <div id="ar-ui" hidden>
-    <div id="step-badge"></div>
-    <div id="hint-scan"></div>
+  <!-- واجهة البحث عن الماركر -->
+  <div id="scan-ui">
+    <div id="step-badge">القطعة 1 / 3</div>
+    <div id="hint-scan">وجّه الكاميرا نحو الماركر لاكتشاف القطعة</div>
+  </div>
 
-    <div id="panel">
-      <h3 id="panel-title"></h3>
-      <p id="panel-body"></p>
-
-      <!-- زر الاستخدام في الواقع المعزز -->
-      <button id="btn-ar-mode" style="
-        width:100%;
-        margin-top:10px;
-        padding:12px;
-        border-radius:10px;
-        border:none;
-        background:#d4af37;
-        font-weight:bold;
-        cursor:pointer;">
-        استخدام في الواقع المعزز
-      </button>
-
-      <button id="btn-close">
-        إغلاق والانتقال للقطعة التالية
-      </button>
+  <!-- الصفحة الفارغة (عرض حر 360 للمجسم) -->
+  <div id="model-360-view">
+    <model-viewer 
+      id="viewer-360" 
+      camera-controls 
+      disable-pan 
+      shadow-intensity="1" 
+      exposure="1.2">
+    </model-viewer>
+    <div class="info-panel">
+      <h3 id="info-title">عنوان المجسم</h3>
+      <p id="info-body">وصف المجسم يظهر هنا</p>
+      <button id="btn-next" class="btn-gold btn-block">متابعة الجولة</button>
     </div>
   </div>
 
   <!-- شاشة النهاية -->
   <div id="done-screen">
-    <h2>شكراً لزيارتك</h2>
-    <p>
-      اكتملت جولتك داخل متحف الواقع المعزز للثقافة السعودية.
+    <h2>اكتملت الجولة!</h2>
+    <p style="color:#ddd; line-height:1.8; margin-bottom: 25px;">
+      لقد استكشفت جميع القطع. الآن يمكنك إنشاء متحفك الخاص وإضافة المجسمات بحرية في واقعك المعزز.
     </p>
-    <button id="btn-reload">إعادة الجولة</button>
+    <button id="btn-open-museum" class="btn-gold btn-block" style="max-width: 300px;">إنشاء متحفك الخاص</button>
   </div>
 
-  <!-- المتحف الخاص بي -->
-  <div id="museum-mode" style="
-    display:none;
-    position:fixed;
-    inset:0;
-    background:#0c1410;
-    z-index:999;
-    color:white;
-    padding:20px;
-  ">
-    <h2 style="color:#d4af37">أنشئ متحفك الخاص</h2>
-    <p>اختر أي قطعة لإضافتها إلى عالمك</p>
-    <div id="museum-buttons" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
-    <button onclick="closeMuseum()" style="
-      margin-top:20px;
-      padding:12px;
-      width:100%;
-      border:none;
-      border-radius:10px;
-      background:#d4af37;
-      font-weight:bold;">
-      إغلاق
-    </button>
+  <!-- واجهة المتحف الخاص (AR) -->
+  <div id="museum-ui">
+    <h3 class="museum-title">اضغط لإضافة قطعة، واسحب لتدوير المتحف</h3>
+    <div class="museum-items" id="museum-list">
+      <!-- الأزرار تُضاف هنا برمجياً -->
+    </div>
+    <button onclick="location.reload()" class="btn-gold" style="width:100%; margin-top:15px; padding: 10px;">إعادة تشغيل التطبيق</button>
   </div>
 
-  <!-- مشهد AR -->
+  <!-- مشهد AR.js الرئيسي -->
   <a-scene
     embedded
     vr-mode-ui="enabled: false"
     renderer="logarithmicDepthBuffer: true; colorManagement: true;"
     arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
     device-orientation-permission-ui="enabled: false"
-    style="position:fixed;inset:0;"
-    id="ar-scene"
+    museum-controller
   >
-    <!-- إضاءة محسنة -->
-    <a-entity light="type: ambient; color: #ffffff; intensity: 1.3"></a-entity>
-    <a-entity light="type: directional; color: #ffffff; intensity: 1.2" position="1 2 1"></a-entity>
-    <a-entity light="type: directional; color: #ffe8b0; intensity: 0.7" position="-1 1 0"></a-entity>
-    <a-entity light="type: point; intensity: 0.5; distance: 10; color: #d4af37" position="0 2 0"></a-entity>
+    <!-- إضاءة عامة للمتحف -->
+    <a-light type="ambient" color="#ffffff" intensity="1"></a-light>
+    <a-light type="directional" position="1 2 1" intensity="1.2"></a-light>
 
-    <!-- الماركرات -->
-    <a-marker id="marker-0" type="pattern" url="markers/patt.hiro" emitevents="true"></a-marker>
-    <a-marker id="marker-1" type="pattern" url="markers/patt.kanji" emitevents="true"></a-marker>
-    <a-marker id="marker-2" type="pattern" url="markers/pattern-letterA.patt" emitevents="true"></a-marker>
+    <!-- الماركرات الخاصة بوضع الجولة -->
+    <a-marker id="m-0" type="pattern" url="markers/patt.hiro" emitevents="true"></a-marker>
+    <a-marker id="m-1" type="pattern" url="markers/patt.kanji" emitevents="true"></a-marker>
+    <a-marker id="m-2" type="pattern" url="markers/pattern-letterA.patt" emitevents="true"></a-marker>
 
-    <!-- المجسم الثابت -->
-    <a-entity id="persistent-holder" visible="false">
-      <!-- المجسم مع التعديلات الجديدة للتكبير والإحداثيات -->
-      <a-entity
-        id="persistent-model"
-        gesture-handler
-        scale="1 1 1"
-        position="0 0 0">
-      </a-entity>
-    </a-entity>
+    <!-- الكاميرا -->
+    <a-entity camera></a-entity>
 
-    <!-- كاميرا المشهد -->
-    <a-entity
-      id="camera"
-      camera
-      look-controls="enabled: false"
-      wasd-controls="enabled: false">
-    </a-entity>
-
+    <!-- حاوية المتحف الخاص (يتم إضافة المجسمات بداخلها) -->
+    <!-- تقع على بعد 3 متر أمام نقطة البداية للكاميرا -->
+    <a-entity id="museum-container" position="0 -0.5 -3" rotation="0 0 0"></a-entity>
+    
   </a-scene>
 
   <script>
     (function () {
       const STEPS = [
-        {
-          markerIndex: 0,
-          title: "الخيمة العربية",
-          body: "الخيمة تمثل التراث البدوي والحياة الصحراوية.",
-          scale: "0.5 0.5 0.5",
-          modelSrc: "models/arabic_tent.glb"
-        },
-        {
-          markerIndex: 1,
-          title: "الدلة السعودية",
-          body: "الدلة رمز الكرم والضيافة في الثقافة السعودية.",
-          scale: "0.2 0.2 0.2",
-          modelSrc: "models/saudi_dallah.glb"
-        },
-        {
-          markerIndex: 2,
-          title: "السيف العربي",
-          body: "السيف العربي رمز للشجاعة والفروسية.",
-          scale: "0.45 0.45 0.45",
-          modelSrc: "models/arabic_sword.glb"
-        }
+        { title: "الخيمة العربية", body: "تمثل التراث البدوي والحياة الصحراوية وتصميمها يسهل نقلها.", scale: "0.5 0.5 0.5", modelSrc: "models/arabic_tent.glb" },
+        { title: "الدلة السعودية", body: "رمز الكرم والضيافة، وتستخدم لتقديم القهوة العربية الأصيلة.", scale: "0.2 0.2 0.2", modelSrc: "models/saudi_dallah.glb" },
+        { title: "السيف العربي", body: "يمثل الشجاعة والفروسية، ويستخدم في أداء العرضة السعودية.", scale: "0.45 0.45 0.45", modelSrc: "models/arabic_sword.glb" }
       ];
 
+      // الحالات: welcome -> scan -> view360 -> done -> museum
+      window.appMode = 'welcome'; 
       let currentStep = 0;
-      let locked = false;
 
-      const welcome = document.getElementById("welcome");
-      const arUi = document.getElementById("ar-ui");
-      const panel = document.getElementById("panel");
-      const panelTitle = document.getElementById("panel-title");
-      const panelBody = document.getElementById("panel-body");
-      const stepBadge = document.getElementById("step-badge");
-      const hintScan = document.getElementById("hint-scan");
-      const doneScreen = document.getElementById("done-screen");
-      const pModel = document.getElementById("persistent-model");
-      const holder = document.getElementById("persistent-holder");
+      // عناصر الواجهة
+      const uiWelcome = document.getElementById("welcome");
+      const uiScan = document.getElementById("scan-ui");
+      const ui360 = document.getElementById("model-360-view");
+      const uiDone = document.getElementById("done-screen");
+      const uiMuseum = document.getElementById("museum-ui");
+      
+      const badge = document.getElementById("step-badge");
+      const viewer360 = document.getElementById("viewer-360");
+      const infoTitle = document.getElementById("info-title");
+      const infoBody = document.getElementById("info-body");
+      const museumContainer = document.getElementById("museum-container");
 
-      function setHint() {
-        if (currentStep >= STEPS.length) return;
-        stepBadge.innerHTML =
-          `<div class="step-chip">
-            القطعة ${currentStep + 1} / ${STEPS.length}
-          </div>`;
-        hintScan.textContent = "وجّه الكاميرا نحو الماركر لإظهار المجسم.";
+      // إخفاء شاشة التحميل
+      window.addEventListener("load", () => {
+        setTimeout(() => document.getElementById("loading-screen").classList.add("hidden"), 1000);
+      });
+
+      // 1. بدء الجولة
+      document.getElementById("btn-start").addEventListener("click", () => {
+        uiWelcome.style.display = "none";
+        window.appMode = 'scan';
+        uiScan.style.display = "flex";
+        updateScanHint();
+      });
+
+      function updateScanHint() {
+        badge.innerText = `القطعة ${currentStep + 1} من ${STEPS.length}`;
       }
 
-      function showPanel(step) {
-        panelTitle.textContent = step.title;
-        panelBody.textContent = step.body;
-        panel.classList.add("visible");
-      }
-
-      function hidePanel() {
-        panel.classList.remove("visible");
-      }
-
-      // دالة ظهور الماركر المُحدثة
+      // 2. اكتشاف الماركر
       function onMarkerFound(index) {
-        if (locked) return;
-        if (index !== currentStep) return;
+        if (window.appMode !== 'scan' || index !== currentStep) return;
+        
+        window.appMode = 'view360'; // إيقاف البحث
+        uiScan.style.display = "none";
+        ui360.style.display = "flex"; // إظهار الصفحة الفارغة
 
-        const step = STEPS[currentStep];
-        locked = true;
-
-        holder.setAttribute("visible", true);
-        pModel.setAttribute("gltf-model", step.modelSrc);
-        pModel.setAttribute("scale", step.scale);
-
-        // تثبيت الحجم الابتدائي
-        pModel.object3D.position.set(0, 0, 0);
-
-        showPanel(step);
-        hintScan.textContent = "يمكنك سحب المجسم أو تكبيره بإصبعين";
+        // تعبئة البيانات في صفحة 360
+        viewer360.src = STEPS[currentStep].modelSrc;
+        infoTitle.innerText = STEPS[currentStep].title;
+        infoBody.innerText = STEPS[currentStep].body;
       }
 
-      function onClose() {
-        hidePanel();
-        holder.setAttribute("visible", false);
-        pModel.removeAttribute("gltf-model");
+      // 3. زر الانتقال للقطعة التالية (داخل الصفحة الفارغة)
+      document.getElementById("btn-next").addEventListener("click", () => {
+        ui360.style.display = "none";
+        viewer360.src = ""; // تفريغ المجسم
         currentStep++;
-        locked = false;
 
         if (currentStep >= STEPS.length) {
-          doneScreen.classList.add("visible");
-          
-          setTimeout(() => {
-            // التحقق من عدم تكرار إضافة الزر إذا تم الضغط أكثر من مرة
-            if (!document.getElementById("btn-custom-museum")) {
-              const btn = document.createElement("button");
-              btn.id = "btn-custom-museum";
-              btn.innerText = "إنشاء متحفك الخاص";
-              btn.style.padding = "14px";
-              btn.style.marginTop = "20px";
-              btn.style.border = "none";
-              btn.style.borderRadius = "999px";
-              btn.style.background = "#d4af37";
-              btn.style.fontWeight = "bold";
-              btn.style.cursor = "pointer";
-              btn.onclick = openMuseum;
-              doneScreen.appendChild(btn);
-            }
-          }, 500);
-
-          return;
-        }
-
-        setHint();
-      }
-
-      // دوال المتحف المخصص
-      function openMuseum() {
-        document.getElementById("museum-mode").style.display = "block";
-        const container = document.getElementById("museum-buttons");
-        container.innerHTML = "";
-
-        STEPS.forEach((step, i) => {
-          const btn = document.createElement("button");
-          btn.innerText = step.title;
-          btn.style.padding = "12px";
-          btn.style.borderRadius = "10px";
-          btn.style.border = "none";
-          btn.style.cursor = "pointer";
-          btn.style.background = "#1a1a1a";
-          btn.style.color = "white";
-          btn.onclick = () => spawnInAR(step);
-          container.appendChild(btn);
-        });
-      }
-
-      function spawnInAR(step) {
-        holder.setAttribute("visible", true);
-        pModel.setAttribute("gltf-model", step.modelSrc);
-        pModel.setAttribute("scale", step.scale);
-        closeMuseum(); // لإغلاق القائمة والعودة لمشاهدة المجسم
-      }
-
-      // مستمعي الأحداث
-      document.getElementById("btn-start").addEventListener("click", () => {
-        welcome.style.display = "none";
-        arUi.hidden = false;
-        setHint();
-      });
-
-      document.getElementById("btn-close").addEventListener("click", onClose);
-
-      document.getElementById("btn-reload").addEventListener("click", () => {
-        location.reload();
-      });
-
-      document.getElementById("btn-ar-mode").addEventListener("click", () => {
-        if (navigator.xr) {
-          alert("سيتم فتح وضع الواقع المعزز الحقيقي (AR WebXR)");
+          window.appMode = 'done';
+          uiDone.style.display = "flex";
         } else {
-          alert("الجهاز لا يدعم AR المباشر، سيتم استخدام وضع العرض فقط");
+          window.appMode = 'scan';
+          uiScan.style.display = "flex";
+          updateScanHint();
         }
       });
 
-      for (let i = 0; i < STEPS.length; i++) {
-        const marker = document.getElementById("marker-" + i);
-        if(marker) {
-          marker.addEventListener("markerFound", () => {
-            onMarkerFound(i);
-          });
-        }
+      // 4. فتح المتحف الخاص
+      document.getElementById("btn-open-museum").addEventListener("click", () => {
+        uiDone.style.display = "none";
+        window.appMode = 'museum';
+        uiMuseum.style.display = "flex";
+
+        // توليد أزرار القطع
+        const list = document.getElementById("museum-list");
+        list.innerHTML = "";
+        STEPS.forEach((step, idx) => {
+          const btn = document.createElement("button");
+          btn.className = "museum-btn";
+          btn.innerText = step.title;
+          btn.onclick = () => spawnModelInMuseum(step, idx);
+          list.appendChild(btn);
+        });
+      });
+
+      // دالة إضافة القطعة للواقع المعزز (المتحف)
+      // سيتم ترتيب القطع بجانب بعضها بناءً على الفهرس
+      function spawnModelInMuseum(step, index) {
+        // توزيع إحداثيات (x) لتجنب تداخل المجسمات (مثل: -1.5, 0, 1.5)
+        const posX = (index - 1) * 1.5; 
+        
+        const el = document.createElement("a-entity");
+        el.setAttribute("gltf-model", step.modelSrc);
+        el.setAttribute("scale", step.scale);
+        el.setAttribute("position", `${posX} 0 0`); // توضع داخل الحاوية
+        
+        // تأثير طفو خفيف للمجسم
+        el.setAttribute("animation__float", `property: position; to: ${posX} 0.2 0; dir: alternate; dur: 2000; loop: true; easing: easeInOutSine`);
+
+        museumContainer.appendChild(el);
       }
 
-      window.addEventListener("load", () => {
-        setTimeout(() => {
-          document.getElementById("loading-screen").classList.add("hidden");
-        }, 1200);
-      });
+      // ربط أحداث الماركرات
+      for (let i = 0; i < STEPS.length; i++) {
+        const marker = document.getElementById("m-" + i);
+        if(marker) {
+          marker.addEventListener("markerFound", () => onMarkerFound(i));
+        }
+      }
 
     })();
   </script>
