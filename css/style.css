@@ -1,0 +1,90 @@
+:root {
+  --accent: #d4af37;
+  --bg: #111;
+}
+
+body {
+  margin: 0; 
+  padding: 0; 
+  background: var(--bg); 
+  color: white;
+  font-family: "Tajawal", sans-serif; 
+  overflow: hidden;
+}
+
+* { box-sizing: border-box; }
+
+/* أزرار وتنسيقات عامة */
+.btn-gold {
+  padding: 15px 30px; 
+  border: none; 
+  border-radius: 999px; 
+  cursor: pointer;
+  font-size: 1rem; 
+  font-weight: bold; 
+  background: linear-gradient(135deg, #e8c547, #8f7024);
+  color: #000; 
+  box-shadow: 0 10px 30px rgba(212,175,55,.3); 
+  text-align: center; 
+  text-decoration: none; 
+  display: inline-block;
+}
+
+/* شاشات جولة الماركرات */
+#welcome-screen {
+  position: fixed; inset: 0; z-index: 20; 
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; 
+  padding: 20px; text-align: center;
+  background: radial-gradient(circle, #1a2921 0%, #0c1410 100%);
+}
+
+#scan-ui {
+  position: fixed; inset: 0; z-index: 10; 
+  pointer-events: none; display: none;
+  flex-direction: column; align-items: center;
+}
+
+#hint-scan { 
+  position: absolute; bottom: 40px; color: white; 
+  text-shadow: 0 2px 6px black; font-size: 1.1rem; 
+}
+
+/* الصفحة الفارغة 360 */
+#model-360-view {
+  position: fixed; inset: 0; z-index: 50; display: none; 
+  background: #111; flex-direction: column; text-align: center;
+}
+
+#model-360-view h1 { margin: 20px 0; color: var(--accent); font-size: 1.8rem; }
+
+model-viewer { width: 100%; height: 75vh; outline: none; }
+
+.viewer-footer { padding: 15px; background: #000; display: flex; justify-content: center; }
+
+/* واجهة المتحف الخاص (Surface AR) */
+#museum-ui {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 40%, transparent);
+  padding: 20px; display: none; flex-direction: column; align-items: center;
+}
+
+#museum-ui h3 { color: white; margin-bottom: 15px; text-shadow: 0 2px 4px black; }
+
+.items-row { display: flex; gap: 15px; overflow-x: auto; max-width: 100%; padding-bottom: 10px; }
+
+.item-icon {
+  width: 70px; height: 70px; border-radius: 12px; background: rgba(255,255,255,0.1);
+  border: 2px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; text-align: center; padding: 5px; color: white; transition: 0.3s;
+}
+
+.item-icon.active { border-color: var(--accent); background: rgba(212,175,55,0.2); }
+
+#ar-reticle { display: none; }
+
+/* شاشة النهاية */
+#done-screen {
+  position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.9); display: none;
+  flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center;
+}
