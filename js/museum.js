@@ -7,79 +7,89 @@ const ARTIFACTS = [
 document.addEventListener("DOMContentLoaded", () => {
   let selectedSrc = ARTIFACTS[0].src;
   let selectedScale = ARTIFACTS[0].scale;
-  let activeModel = null; 
+  let activeModel = null; // يمثل آخر مجسم تم وضعه للتحكم به
 
   const itemsRow = document.getElementById('museum-items');
   const instructionBadge = document.getElementById('ar-instruction');
   const bottomPanel = document.getElementById('bottom-panel');
   const btnCustomAr = document.getElementById('btn-custom-ar');
   const scene = document.querySelector('a-scene');
-  const reticle = document.getElementById('reticle');
   
-  // توليد الأزرار
+  // توليد أزرار المجسمات
   ARTIFACTS.forEach((art, index) => {
     const btn = document.createElement('div');
     btn.className = 'ar-item-btn' + (index === 0 ? ' active' : '');
     btn.innerHTML = `<span>${art.name}</span>`;
     
-    btn.onclick = () => {
+    btn.onclick = (e) => {
+      e.stopPropagation(); // يمنع وضع مجسم عند الضغط على الزر
       document.querySelectorAll('.ar-item-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      
       selectedSrc = art.src;
       selectedScale = art.scale;
+      
+      instructionBadge.innerText = `تم اختيار ${art.name} - اضغط الشاشة للإضافة`;
     };
     itemsRow.appendChild(btn);
   });
 
-  // إخفاء زر الكاميرا الكبير وإظهار أدوات المتحف عند تشغيل الكاميرا
+  // إظهار الأدوات عند تشغيل الكاميرا
   scene.addEventListener('enter-vr', () => {
-    btnCustomAr.style.display = 'none';
-    bottomPanel.style.display = 'block';
-    instructionBadge.style.display = 'block';
+    if (scene.is('ar-mode')) {
+      btnCustomAr.style.display = 'none';
+      bottomPanel.style.display = 'block';
+      instructionBadge.style.display = 'block';
+      instructionBadge.innerText = "اضغط على أي مكان في الشاشة للإسقاط فوراً";
+      instructionBadge.style.background = "rgba(212, 175, 55, 0.9)";
+      instructionBadge.style.color = "black";
+    }
   });
 
-  // تحديث التوجيهات
-  setInterval(() => {
-    if (scene.is('ar-mode')) {
-      if (reticle.getAttribute('visible')) {
-        instructionBadge.innerText = "اضغط على الشاشة لإضافة المجسم";
-        instructionBadge.style.background = "rgba(212, 175, 55, 0.9)";
-        instructionBadge.style.color = "black";
-      } else {
-        instructionBadge.innerText = "امسح الأرضية ببطء حتى تظهر الدائرة...";
-        instructionBadge.style.background = "rgba(0, 0, 0, 0.6)";
-        instructionBadge.style.color = "white";
-      }
-    }
-  }, 500);
-
-  // مكون الإسقاط والتحكم
+  // مكون الإسقاط الفوري المتعدد
   AFRAME.registerComponent('museum-controller', {
     init: function () {
       const el = this.el;
+      const cameraEl = document.querySelector('a-camera');
 
+      // عند لمس الشاشة، نسقط مجسماً جديداً أمام الكاميرا فوراً
       el.addEventListener('click', (e) => {
         if (!el.is('ar-mode')) return;
 
-        if (reticle.getAttribute('visible')) {
-          const position = reticle.getAttribute('position');
-          const model = document.createElement('a-entity');
-          model.setAttribute('gltf-model', selectedSrc);
-          model.setAttribute('position', position);
-          model.setAttribute('scale', selectedScale);
-          
-          model.setAttribute('animation', {
-            property: 'scale', from: '0 0 0', to: selectedScale, dur: 600, easing: 'easeOutElastic'
-          });
+        // حساب النقطة التي تقع على بعد 1.5 متر أمام المستخدم
+        const camera3D = cameraEl.object3D;
+        const direction = new AFRAME.THREE.Vector3(0, 0, -1);
+        direction.applyQuaternion(camera3D.quaternion);
+        direction.y = 0; // إبقاء الاتجاه أفقياً
+        direction.normalize();
 
-          el.appendChild(model);
-          activeModel = model; 
-          
-          instructionBadge.innerText = "اسحب يميناً/يساراً للتدوير، وبإصبعين للتكبير";
-        }
+        const distance = 1.5;
+        const spawnPos = new AFRAME.THREE.Vector3();
+        spawnPos.copy(camera3D.position).add(direction.multiplyScalar(distance));
+        spawnPos.y = 0; // تثبيت المجسم على الأرض دائماً (Y=0)
+
+        // إنشاء المجسم الجديد (بدون حذف القديم)
+        const model = document.createElement('a-entity');
+        model.setAttribute('gltf-model', selectedSrc);
+        model.setAttribute('position', `${spawnPos.x} 0 ${spawnPos.z}`);
+        
+        // تأثير ظهور جمالي
+        model.setAttribute('scale', '0 0 0');
+        model.setAttribute('animation', {
+          property: 'scale', to: selectedScale, dur: 800, easing: 'easeOutElastic'
+        });
+
+        el.appendChild(model);
+        
+        // جعل المجسم الجديد هو "النشط" للتدوير والتكبير
+        activeModel = model; 
+        
+        instructionBadge.innerText = "تمت الإضافة! اسحب للتدوير، أو اختر قطعة أخرى";
+        instructionBadge.style.background = "rgba(0, 0, 0, 0.7)";
+        instructionBadge.style.color = "var(--sand)";
       });
 
-      // نظام التدوير والتكبير
+      // نظام التدوير والتكبير لآخر مجسم تم إضافته
       let startX = 0;
       let initialRot = 0;
       let initialPinchDist = 0;

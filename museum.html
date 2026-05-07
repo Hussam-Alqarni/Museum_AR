@@ -23,8 +23,7 @@
       </div>
     </div>
 
-    <!-- زر تشغيل الكاميرا المخصص الذي يحل المشكلة -->
-    <button id="btn-custom-ar" style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); padding: 15px 30px; background: linear-gradient(135deg, #e8c547, #8f7024); color: black; font-weight: bold; border-radius: 999px; border: none; font-size: 1.1rem; box-shadow: 0 10px 30px rgba(212,175,55,.4); cursor: pointer; font-family: 'Tajawal', sans-serif;">
+    <button id="btn-custom-ar" style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); padding: 15px 30px; background: linear-gradient(135deg, #d1b15a, #8a7342); color: white; font-weight: bold; border-radius: 999px; border: none; font-size: 1.1rem; box-shadow: 0 10px 30px rgba(209, 177, 90, 0.4); cursor: pointer; font-family: 'Tajawal', sans-serif;">
       تشغيل كاميرا الواقع المعزز
     </button>
 
@@ -36,24 +35,17 @@
 
   </div>
 
-  <!-- ربط زر التشغيل بـ vr-mode-ui -->
+  <!-- الاعتماد على local-floor فقط للإسقاط الفوري (بدون انتظار hit-test) -->
   <a-scene 
     id="webxr-scene"
-    webxr="requiredFeatures: hit-test, local-floor, dom-overlay; overlayElement: #ui-overlay;"
+    webxr="requiredFeatures: local-floor, dom-overlay; overlayElement: #ui-overlay;"
     renderer="colorManagement: true; physicallyCorrectLights: true;"
     vr-mode-ui="enterVRButton: #btn-custom-ar">
     
     <a-light type="ambient" intensity="1"></a-light>
     <a-light type="directional" position="1 2 0.5" intensity="1.2" castShadow="true"></a-light>
 
-    <a-entity ar-hit-test="target:#reticle">
-      <a-camera position="0 1.6 0"></a-camera>
-    </a-entity>
-
-    <a-entity id="reticle" visible="false">
-      <a-ring color="#d4af37" radius-inner="0.1" radius-outer="0.15" rotation="-90 0 0"></a-ring>
-      <a-circle color="#d4af37" radius="0.05" rotation="-90 0 0" opacity="0.8"></a-circle>
-    </a-entity>
+    <a-camera position="0 1.6 0"></a-camera>
     
   </a-scene>
 
