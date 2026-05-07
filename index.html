@@ -18,13 +18,27 @@
 
   <div id="tour-container">
     
-    <!-- شاشة الترحيب -->
-    <section id="welcome-screen">
-      <h1 style="color:var(--accent);">متحف الواقع المعزز</h1>
-      <p style="color:#bbb; max-width: 400px; line-height: 1.8;">
-        وجّه كاميرا هاتفك نحو الماركرات المخصصة لاكتشاف القطع الأثرية بـ 360 درجة.
-      </p>
-      <button id="btn-start" class="btn-gold" style="margin-top: 20px;">افتح الكاميرا</button>
+    <!-- شاشة الترحيب (محسنة مع عبارات ترحيبية وتعليمات) -->
+    <section id="welcome-screen" style="background: var(--bg);">
+      <div style="max-width: 500px; padding: 20px;">
+        <h1 style="color:var(--accent); margin-bottom: 10px; font-size: 2.2rem;">أهلاً بك في متحف الواقع المعزز</h1>
+        <p style="color:#e8eee9; font-size: 1.1rem; margin-bottom: 30px;">
+          اكتشف روائع الثقافة السعودية بطريقة تفاعلية ومبتكرة.
+        </p>
+
+        <!-- صندوق التعليمات -->
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 15px; padding: 25px; text-align: right; margin-bottom: 30px;">
+          <h3 style="color: var(--accent); margin-top: 0; margin-bottom: 15px;">تعليمات الجولة:</h3>
+          <ul style="color: #bbb; line-height: 2; padding-right: 20px; margin: 0; font-size: 1rem;">
+            <li>اضغط على زر <strong>افتح الكاميرا</strong> للبدء.</li>
+            <li>وجّه كاميرا هاتفك نحو الماركرات (الصور المطبوعة).</li>
+            <li>عند ظهور المجسم، ستنتقل لصفحة حرة لتكبيره وتدويره.</li>
+            <li>بعد استكشاف جميع القطع، ستتمكن من تصميم متحفك الخاص!</li>
+          </ul>
+        </div>
+
+        <button id="btn-start" class="btn-gold" style="width: 100%;">افتح الكاميرا وابدأ الجولة</button>
+      </div>
     </section>
 
     <!-- واجهة البحث عن الماركر -->
@@ -32,9 +46,11 @@
       <div id="hint-scan">ابحث عن الماركر لعرض القطعة...</div>
     </div>
 
-    <!-- الصفحة الفارغة لعرض المجسم 360 -->
-    <div id="model-360-view">
-      <h1 id="viewer-title">AR Museum - Artifact</h1>
+    <!-- الصفحة الفارغة لعرض المجسم 360 (الخلفية متطابقة مع لون الصفحة) -->
+    <div id="model-360-view" style="background: var(--bg);">
+      <h1 id="viewer-title" style="color:var(--accent); margin-top: 30px;">القطعة الأثرية</h1>
+      
+      <!-- استخدام خلفية شفافة للمجسم ليندمج مع خلفية الصفحة -->
       <model-viewer
         id="mv-element"
         src=""
@@ -42,17 +58,19 @@
         camera-controls
         ar
         shadow-intensity="1"
-        exposure="1">
+        exposure="1"
+        style="background-color: transparent; width: 100%; height: 65vh;">
       </model-viewer>
-      <div class="viewer-footer">
-        <button id="btn-next" class="btn-gold">القطعة التالية</button>
+      
+      <div class="viewer-footer" style="background: transparent; margin-top: 10px;">
+        <button id="btn-next" class="btn-gold" style="width: 80%; max-width: 300px;">القطعة التالية</button>
       </div>
     </div>
 
     <!-- شاشة النهاية -->
-    <div id="done-screen">
+    <div id="done-screen" style="background: var(--bg);">
       <h2 style="color:var(--accent);">اكتملت الجولة!</h2>
-      <p style="color:#ddd; margin-bottom: 30px;">الآن يمكنك الدخول لتصميم متحفك الخاص في مساحتك الحقيقية.</p>
+      <p style="color:#ddd; margin-bottom: 30px; max-width: 400px; line-height: 1.8;">الآن يمكنك الدخول لتصميم متحفك الخاص وإضافة المجسمات في مساحتك الحقيقية.</p>
       <!-- التوجيه إلى صفحة المتحف الجديدة -->
       <a href="museum.html" class="btn-gold">دخول المتحف الخاص (مساحة حرة)</a>
     </div>
