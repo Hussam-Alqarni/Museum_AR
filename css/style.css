@@ -1,90 +1,130 @@
 :root {
-  --accent: #d4af37;
-  --bg: #111;
-}
-
-body {
-  margin: 0; 
-  padding: 0; 
-  background: var(--bg); 
-  color: white;
-  font-family: "Tajawal", sans-serif; 
-  overflow: hidden;
+  --bg-deep: #0b0908;
+  --bg-panel: rgba(18, 14, 11, 0.88);
+  --line-subtle: rgba(245, 230, 200, 0.09);
+  --accent: #d1b15a;
+  --accent-dim: #8a7342;
+  --sand: #e8dcc4;
+  --text: #ece6dc;
+  --muted: #a3988a;
+  --green-muted: #3d6b52;
 }
 
 * { box-sizing: border-box; }
 
-/* أزرار وتنسيقات عامة */
-.btn-gold {
-  padding: 15px 30px; 
-  border: none; 
-  border-radius: 999px; 
-  cursor: pointer;
-  font-size: 1rem; 
-  font-weight: bold; 
-  background: linear-gradient(135deg, #e8c547, #8f7024);
-  color: #000; 
-  box-shadow: 0 10px 30px rgba(212,175,55,.3); 
-  text-align: center; 
-  text-decoration: none; 
-  display: inline-block;
+body {
+  margin: 0;
+  font-family: "Tajawal", system-ui, sans-serif;
+  background: var(--bg-deep);
+  color: var(--text);
+  overflow: hidden;
 }
 
-/* شاشات جولة الماركرات */
-#welcome-screen {
-  position: fixed; inset: 0; z-index: 20; 
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; 
-  padding: 20px; text-align: center;
-  background: radial-gradient(circle, #1a2921 0%, #0c1410 100%);
+/* ——— شاشة الترحيب ——— */
+.welcome-section {
+  position: fixed; inset: 0; z-index: 20; display: flex; flex-direction: column;
+  align-items: stretch; max-width: 38rem; margin: 0 auto;
+  padding: clamp(1.25rem, 4vw, 2rem) clamp(1rem, 4vw, 1.5rem) 2rem;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  background: linear-gradient(175deg, #14100c 0%, var(--bg-deep) 38%, #080706 100%),
+              radial-gradient(ellipse 90% 50% at 50% -8%, rgba(209, 177, 90, 0.07) 0%, transparent 55%);
 }
 
-#scan-ui {
-  position: fixed; inset: 0; z-index: 10; 
-  pointer-events: none; display: none;
-  flex-direction: column; align-items: center;
+.welcome-section::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-#hint-scan { 
-  position: absolute; bottom: 40px; color: white; 
-  text-shadow: 0 2px 6px black; font-size: 1.1rem; 
+.welcome-inner { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 1.35rem; }
+
+.welcome-eyebrow {
+  display: inline-block; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em;
+  color: var(--green-muted); margin-bottom: 0.5rem;
 }
 
-/* الصفحة الفارغة 360 */
+.welcome-section h1 {
+  font-family: "Reem Kufi", "Tajawal", sans-serif; font-size: clamp(1.75rem, 6vw, 2.35rem);
+  font-weight: 600; line-height: 1.15; margin: 0 0 0.65rem; color: var(--sand);
+}
+
+.welcome-rule {
+  width: 4rem; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent-dim), var(--accent), var(--accent-dim));
+  margin: 0 auto 1rem 0;
+}
+
+.welcome-lead { margin: 0; font-size: 1rem; line-height: 1.8; color: var(--muted); max-width: 32rem; }
+.welcome-lead strong { color: var(--sand); font-weight: 600; }
+
+.welcome-block {
+  background: var(--bg-panel); border: 1px solid var(--line-subtle); border-radius: 8px;
+  padding: 1.15rem 1.2rem 1.25rem; backdrop-filter: blur(8px); margin-top: 10px;
+}
+
+.welcome-block h2 {
+  font-family: "Reem Kufi", "Tajawal", sans-serif; font-size: 1.2rem; font-weight: 600;
+  margin: 0 0 1rem; color: var(--sand);
+}
+
+.step-rows { display: flex; flex-direction: column; gap: 0.85rem; margin: 0; padding: 0; list-style: none; }
+.step-rows li { display: grid; grid-template-columns: auto 1fr; gap: 0.65rem 0.75rem; align-items: start; font-size: 0.95rem; line-height: 1.65; color: var(--text); }
+.step-num { display: inline-flex; align-items: center; justify-content: center; min-width: 1.6rem; height: 1.6rem; font-family: "Reem Kufi", sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--bg-deep); background: var(--accent); border-radius: 3px; }
+
+/* صور الماركرات */
+.markers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65rem; margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--line-subtle); }
+@media (max-width: 380px) { .markers-grid { grid-template-columns: 1fr; max-width: 12rem; margin-left: auto; margin-right: auto; } }
+.marker-tile { text-align: center; }
+.marker-thumb { margin: 0 auto 0.45rem; width: 100%; max-width: 5.5rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: #faf6ef; border-radius: 3px; }
+.marker-thumb img { width: 82%; height: 82%; object-fit: contain; }
+.marker-caption { margin: 0; font-size: 0.85rem; line-height: 1.4; color: var(--text); }
+.marker-caption em { display: block; font-style: normal; font-size: 0.75rem; color: var(--accent-dim); margin-top: 0.15rem; }
+
+/* الأزرار */
+.btn-primary {
+  margin-top: 1rem; width: 100%; padding: 1rem 1.25rem; font-family: "Tajawal", sans-serif;
+  font-size: 1.1rem; font-weight: 700; border: none; border-radius: 4px; cursor: pointer;
+  color: #120e0a; background: var(--accent); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35); transition: background 0.15s ease, transform 0.1s ease;
+}
+.btn-primary:hover { background: #dfc065; }
+.btn-primary:active { transform: translateY(1px); }
+
+/* واجهة الكاميرا والجولة */
+#scan-ui { position: fixed; inset: 0; z-index: 10; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
+#hint-scan { position: absolute; bottom: 40px; color: var(--sand); text-shadow: 0 2px 6px black; font-size: 1.1rem; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 20px; }
+
+/* الصفحة 360 */
 #model-360-view {
-  position: fixed; inset: 0; z-index: 50; display: none; 
-  background: #111; flex-direction: column; text-align: center;
+  position: fixed; inset: 0; z-index: 50; display: none; flex-direction: column;
+  background: linear-gradient(175deg, #14100c 0%, var(--bg-deep) 38%, #080706 100%);
+  text-align: center; padding: 20px;
 }
-
-#model-360-view h1 { margin: 20px 0; color: var(--accent); font-size: 1.8rem; }
-
-model-viewer { width: 100%; height: 75vh; outline: none; }
-
-.viewer-footer { padding: 15px; background: #000; display: flex; justify-content: center; }
-
-/* واجهة المتحف الخاص (Surface AR) */
-#museum-ui {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
-  background: linear-gradient(to top, rgba(0,0,0,0.95) 40%, transparent);
-  padding: 20px; display: none; flex-direction: column; align-items: center;
-}
-
-#museum-ui h3 { color: white; margin-bottom: 15px; text-shadow: 0 2px 4px black; }
-
-.items-row { display: flex; gap: 15px; overflow-x: auto; max-width: 100%; padding-bottom: 10px; }
-
-.item-icon {
-  width: 70px; height: 70px; border-radius: 12px; background: rgba(255,255,255,0.1);
-  border: 2px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  font-size: 0.8rem; text-align: center; padding: 5px; color: white; transition: 0.3s;
-}
-
-.item-icon.active { border-color: var(--accent); background: rgba(212,175,55,0.2); }
-
-#ar-reticle { display: none; }
+#viewer-title { font-family: "Reem Kufi", "Tajawal", sans-serif; color: var(--sand); font-size: 2.2rem; margin-top: 20px; margin-bottom: 10px; }
+#viewer-info { color: var(--muted); font-size: 1rem; line-height: 1.8; max-width: 600px; margin: 0 auto 10px auto; padding: 0 15px; }
+#mv-element { width: 100%; flex: 1; min-height: 40vh; outline: none; }
+.viewer-footer { padding: 10px; background: transparent; display: flex; justify-content: center; }
 
 /* شاشة النهاية */
 #done-screen {
-  position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.9); display: none;
-  flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center;
+  position: fixed; inset: 0; z-index: 100; display: none; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; padding: 24px;
+  background: linear-gradient(180deg, rgba(14, 11, 9, 0.97) 0%, rgba(8, 7, 6, 0.98) 100%);
 }
+#done-title-done { font-family: "Reem Kufi", "Tajawal", sans-serif; font-size: 2rem; color: var(--sand); margin: 0 0 12px; }
+.done-copy { max-width: 400px; line-height: 1.8; color: var(--muted); margin: 0; font-size: 1rem; }
+
+/* =========================================
+   تنسيقات واجهة المتحف الخاص (مساحة حرة)
+   ========================================= */
+#ui-overlay { position: absolute; inset: 0; z-index: 999; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
+#ui-overlay * { pointer-events: auto; }
+
+.top-bar { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; margin-top: 10px; }
+.btn-back { background: var(--bg-panel); border: 1px solid var(--line-subtle); color: var(--text); padding: 10px 20px; border-radius: 999px; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(8px); transition: 0.2s; }
+.instruction-badge { background: rgba(0, 0, 0, 0.7); color: var(--sand); padding: 10px 20px; border-radius: 999px; font-size: 0.95rem; backdrop-filter: blur(10px); border: 1px solid var(--line-subtle); align-self: center; }
+
+.bottom-bar { background: var(--bg-panel); backdrop-filter: blur(15px); padding: 15px; border-radius: 16px; border: 1px solid var(--line-subtle); margin-bottom: 20px; }
+.items-carousel { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px; scroll-behavior: smooth; }
+.items-carousel::-webkit-scrollbar { height: 0px; }
+
+.ar-item-btn { flex: 0 0 85px; height: 85px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line-subtle); display: flex; align-items: center; justify-content: center; color: var(--text); font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
+.ar-item-btn.active { border-color: var(--accent); background: rgba(209, 177, 90, 0.15); color: var(--accent); transform: scale(1.05); }

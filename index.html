@@ -1,56 +1,90 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>متحف الواقع المعزز — جولة الماركرات</title>
-
-  <!-- الخطوط والتصميم -->
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>أثر — جولة ثقافة سعودية بالواقع المعزّز</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;500;600;700&family=Tajawal:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
   <link rel="stylesheet" href="css/style.css" />
 
-  <!-- مكتبات A-Frame و AR.js و Model-Viewer -->
   <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/aframe/build/aframe-ar.js"></script>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer@3.4.0/dist/model-viewer.min.js"></script>
 </head>
 <body>
 
   <div id="tour-container">
     
-    <!-- شاشة الترحيب -->
-    <section id="welcome-screen" style="background: var(--bg);">
-      <div style="max-width: 500px; padding: 20px;">
-        <h1 style="color:var(--accent); margin-bottom: 10px; font-size: 2.2rem;">أهلاً بك في متحف الواقع المعزز</h1>
-        <p style="color:#e8eee9; font-size: 1.1rem; margin-bottom: 30px;">
-          اكتشف روائع الثقافة السعودية بطريقة تفاعلية ومبتكرة.
-        </p>
+    <!-- شاشة الترحيب بالستايل الجديد الرائع -->
+    <section id="welcome-screen" class="welcome-section">
+      <div class="welcome-inner">
+        <header>
+          <p class="welcome-eyebrow">جولة رقمية · ثقافة سعودية</p>
+          <h1>قطع تراث أمام عدستك</h1>
+          <div class="welcome-rule" aria-hidden="true"></div>
+          <p class="welcome-lead">
+            ثلاث وقفات: <strong>خيمة</strong>، ثم <strong>دلة</strong>، ثم <strong>سيف</strong>. تُشير الكاميرا إلى الرموز ليظهر المجسم وتنتقل لصفحة قراءة تاريخه.
+          </p>
+        </header>
 
-        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 15px; padding: 25px; text-align: right; margin-bottom: 30px;">
-          <h3 style="color: var(--accent); margin-top: 0; margin-bottom: 15px;">تعليمات الجولة:</h3>
-          <ul style="color: #bbb; line-height: 2; padding-right: 20px; margin: 0; font-size: 1rem;">
-            <li>اضغط على زر <strong>افتح الكاميرا</strong> للبدء.</li>
-            <li>وجّه كاميرا هاتفك نحو الماركرات (الصور المطبوعة).</li>
-            <li>عند ظهور المجسم، ستنتقل لصفحة حرة لتكبيره وقراءة تاريخه.</li>
-            <li>بعد استكشاف جميع القطع، ستتمكن من تصميم متحفك الخاص!</li>
+        <div class="welcome-block">
+          <h2>قبل ما تفتح الكاميرا</h2>
+          <ul class="step-rows">
+            <li>
+              <span class="step-num">١</span>
+              <span>جهّز الرموز الثلاثة بالترتيب، مطبوعة على ورق أو معروضة على شاشة أخرى.</span>
+            </li>
+            <li>
+              <span class="step-num">٢</span>
+              <span>عند ظهور المجسم، سيتم نقلك لشاشة حرة لتكبيره وتدويره وقراءة معلوماته.</span>
+            </li>
+            <li>
+              <span class="step-num">٣</span>
+              <span>بعد الانتهاء من الوقفات الثلاث، ستتمكن من بناء متحفك الخاص!</span>
+            </li>
           </ul>
+
+          <!-- صور الماركرات كما طلبت -->
+          <div class="markers-grid">
+            <div class="marker-tile">
+              <div class="marker-thumb">
+                <img src="markers/hiro.png" alt="ماركر الخيمة" width="80" height="80" loading="lazy" />
+              </div>
+              <p class="marker-caption">الخيمة <em>Hiro</em></p>
+            </div>
+            <div class="marker-tile">
+              <div class="marker-thumb">
+                <img src="markers/kanji.png" alt="ماركر الدلة" width="80" height="80" loading="lazy" />
+              </div>
+              <p class="marker-caption">الدلة <em>Kanji</em></p>
+            </div>
+            <div class="marker-tile">
+              <div class="marker-thumb">
+                <img src="markers/pattern-letterA.png" alt="ماركر السيف" width="80" height="80" loading="lazy" />
+              </div>
+              <p class="marker-caption">السيف <em>حرف A</em></p>
+            </div>
+          </div>
         </div>
 
-        <button id="btn-start" class="btn-gold" style="width: 100%;">افتح الكاميرا وابدأ الجولة</button>
+        <!-- زر البدء المربوط بـ tour.js -->
+        <button type="button" id="btn-start" class="btn-primary">افتح الكاميرا وابدأ الجولة</button>
       </div>
     </section>
 
     <!-- واجهة البحث عن الماركر -->
-    <div id="scan-ui">
+    <div id="scan-ui" style="display: none;">
       <div id="hint-scan">ابحث عن الماركر لعرض القطعة...</div>
     </div>
 
-    <!-- الصفحة الفارغة لعرض المجسم 360 -->
-    <div id="model-360-view" style="background: var(--bg);">
-      <h1 id="viewer-title" style="color:var(--accent); margin-top: 20px; margin-bottom: 5px;">القطعة الأثرية</h1>
-      
-      <!-- فقرة المعلومات التاريخية -->
-      <p id="viewer-info" style="color:#ddd; font-size: 0.95rem; line-height: 1.6; max-width: 90%; margin: 0 auto 10px auto; padding: 0 10px;"></p>
+    <!-- الصفحة الفارغة لعرض المجسم 360 (محدثة بالستايل الجديد) -->
+    <div id="model-360-view">
+      <h1 id="viewer-title">القطعة الأثرية</h1>
+      <p id="viewer-info"></p>
       
       <model-viewer
         id="mv-element"
@@ -60,19 +94,20 @@
         ar
         shadow-intensity="1"
         exposure="1"
-        style="background-color: transparent; width: 100%; height: 55vh; visibility: hidden;"> <!-- مخفي مبدئياً لمنع التداخل -->
+        style="background-color: transparent; visibility: hidden;">
       </model-viewer>
       
-      <div class="viewer-footer" style="background: transparent; margin-top: 10px;">
-        <button id="btn-next" class="btn-gold" style="width: 80%; max-width: 300px;">القطعة التالية</button>
+      <div class="viewer-footer">
+        <button id="btn-next" class="btn-primary">الانتقال للوقفة التالية</button>
       </div>
     </div>
 
-    <!-- شاشة النهاية -->
-    <div id="done-screen" style="background: var(--bg);">
-      <h2 style="color:var(--accent);">اكتملت الجولة!</h2>
-      <p style="color:#ddd; margin-bottom: 30px; max-width: 400px; line-height: 1.8;">الآن يمكنك الدخول لتصميم متحفك الخاص وإضافة المجسمات في مساحتك الحقيقية.</p>
-      <a href="museum.html" class="btn-gold">دخول المتحف الخاص (مساحة حرة)</a>
+    <!-- شاشة النهاية (محدثة بالستايل الجديد) -->
+    <div id="done-screen">
+      <h2 id="done-title-done">انتهت الوقفات الثلاث</h2>
+      <p class="done-copy">الآن يمكنك الدخول لتصميم متحفك الخاص وإضافة المجسمات بحرية في مساحتك الحقيقية.</p>
+      <!-- التوجيه لصفحة المتحف -->
+      <a href="museum.html" class="btn-primary" style="text-decoration: none; text-align: center; display: inline-block; margin-top: 1.5rem; padding: 1rem 2rem;">دخول المتحف الخاص</a>
     </div>
 
     <!-- حاوية مشهد AR.js -->
