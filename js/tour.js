@@ -1,22 +1,12 @@
-// البيانات المحدثة مع المعلومات التاريخية
 const ARTIFACTS = [
-  { 
-    id: "tent", name: "الخيمة العربية", src: "models/arabic_tent.glb", 
-    info: "تُعرف بـ 'بيت الشعر'، وهي تمثل التراث البدوي الأصيل. صُممت لتتحمل قسوة الصحراء، وكانت مركزاً للكرم والضيافة والاجتماعات القبلية."
-  },
-  { 
-    id: "dallah", name: "الدلة السعودية", src: "models/saudi_dallah.glb", 
-    info: "الرمز الأبرز للضيافة والكرم في المملكة. تُستخدم لإعداد وتقديم القهوة العربية الممزوجة بالهيل والزعفران للضيوف كعلامة على الترحيب."
-  },
-  { 
-    id: "sword", name: "السيف العربي", src: "models/arabic_sword.glb", 
-    info: "يُعد السيف رمزاً للشجاعة، الفروسية، والفخر. يحضر بقوة في المناسبات الوطنية والأفراح، وخاصة في أداء 'العرضة السعودية'."
-  }
+  { id: "tent", name: "الخيمة العربية", src: "models/arabic_tent.glb", info: "تُعرف بـ 'بيت الشعر'، وهي تمثل التراث البدوي الأصيل." },
+  { id: "dallah", name: "الدلة السعودية", src: "models/saudi_dallah.glb", info: "الرمز الأبرز للضيافة والكرم في المملكة لتقديم القهوة العربية." },
+  { id: "sword", name: "السيف العربي", src: "models/arabic_sword.glb", info: "يُعد السيف رمزاً للشجاعة، ويحضر بقوة في المناسبات و'العرضة السعودية'." }
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
   let currentStep = 0;
-  let isTransitioning = false; // لمنع تكرار قراءة الماركر بسرعة
+  let isTransitioning = false; 
 
   const uiWelcome = document.getElementById('welcome-screen');
   const uiScan = document.getElementById('scan-ui');
@@ -26,13 +16,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const mvElement = document.getElementById('mv-element');
   const mvTitle = document.getElementById('viewer-title');
   const mvInfo = document.getElementById('viewer-info');
+  const mvLoading = document.getElementById('mv-loading');
   const arWrapper = document.getElementById('arjs-scene-wrapper');
 
-  // دالة إظهار المجسم بعد اكتمال تحميله (لمنع البطء وظهور المجسم القديم)
+  // إخفاء التحميل عند اكتمال المجسم
   mvElement.addEventListener('load', () => {
+    mvLoading.style.display = 'none';
     mvElement.style.visibility = 'visible';
   });
 
+  // زر البدء
   document.getElementById('btn-start').addEventListener('click', () => {
     uiWelcome.style.display = 'none';
     uiScan.style.display = 'flex';
@@ -53,13 +46,12 @@ document.addEventListener("DOMContentLoaded", () => {
           marker.addEventListener('markerFound', () => {
             if (currentStep === i && !isTransitioning) {
               isTransitioning = true;
-              
-              arWrapper.style.display = 'none'; // إخفاء كاميرا الماركرات
+              arWrapper.style.display = 'none'; 
               uiScan.style.display = 'none';
               ui360.style.display = 'flex';
               
-              // تحديث البيانات (المجسم سيكون مخفياً حتى يكتمل تحميله)
               mvElement.style.visibility = 'hidden';
+              mvLoading.style.display = 'flex'; // إظهار التحميل
               mvTitle.innerText = art.name;
               mvInfo.innerText = art.info;
               mvElement.src = art.src;
@@ -70,15 +62,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   });
 
+  // أزرار الرجوع
+  document.getElementById('btn-back-home').addEventListener('click', () => {
+    arWrapper.innerHTML = ''; // إغلاق الكاميرا
+    uiScan.style.display = 'none';
+    uiWelcome.style.display = 'flex';
+  });
+
+  document.getElementById('btn-back-scan').addEventListener('click', () => {
+    ui360.style.display = 'none';
+    mvElement.src = "";
+    isTransitioning = false;
+    arWrapper.style.display = 'block';
+    uiScan.style.display = 'flex';
+  });
+
+  document.getElementById('btn-restart-tour').addEventListener('click', () => {
+    location.reload();
+  });
+
+  // زر التالي
   document.getElementById('btn-next').addEventListener('click', () => {
     ui360.style.display = 'none';
-    
-    // تفريغ المجسم فوراً لمنع ظهوره في الخطوة التالية
     mvElement.src = "";
     mvElement.style.visibility = 'hidden';
     
     currentStep++;
-    isTransitioning = false; // فك القفل للخطوة التالية
+    isTransitioning = false; 
     
     if (currentStep >= ARTIFACTS.length) {
       uiDone.style.display = 'flex';

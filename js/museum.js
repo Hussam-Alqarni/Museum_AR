@@ -1,23 +1,24 @@
+// تم ضبط الأحجام لتكون واقعية جداً بالنسبة للبيئة المحيطة
 const ARTIFACTS = [
-  { id: "tent", name: "الخيمة", src: "models/arabic_tent.glb", scale: "0.2 0.2 0.2" },
-  { id: "dallah", name: "الدلة", src: "models/saudi_dallah.glb", scale: "0.1 0.1 0.1" },
-  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.2 0.2 0.2" }
+  { id: "tent", name: "الخيمة", src: "models/arabic_tent.glb", scale: "1.2 1.2 1.2" }, 
+  { id: "dallah", name: "الدلة", src: "models/saudi_dallah.glb", scale: "0.3 0.3 0.3" }, 
+  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.8 0.8 0.8" } 
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
   let selectedSrc = ARTIFACTS[0].src;
   let selectedScale = ARTIFACTS[0].scale;
-  let activeModel = null; // المجسم القابل للتحريك والتدوير حالياً
+  let activeModel = null; 
 
   const itemsRow = document.getElementById('museum-items');
   const instructionBadge = document.getElementById('ar-instruction');
   const bottomPanel = document.getElementById('bottom-panel');
   const btnCustomAr = document.getElementById('btn-custom-ar');
   const btnPlaceModel = document.getElementById('btn-place-model');
+  const arLoading = document.getElementById('ar-loading');
   const scene = document.querySelector('a-scene');
   const cameraEl = document.querySelector('a-camera');
   
-  // 1. توليد أزرار المجسمات في الشريط السفلي
   ARTIFACTS.forEach((art, index) => {
     const btn = document.createElement('div');
     btn.className = 'ar-item-btn' + (index === 0 ? ' active' : '');
@@ -27,81 +28,83 @@ document.addEventListener("DOMContentLoaded", () => {
       e.stopPropagation();
       document.querySelectorAll('.ar-item-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      
       selectedSrc = art.src;
       selectedScale = art.scale;
       
       if(scene.is('ar-mode')) {
-        instructionBadge.innerText = `تم اختيار ${art.name} - اضغط "إسقاط المجسم"`;
+        instructionBadge.innerText = `تم اختيار ${art.name} - اضغط "إسقاط"`;
       }
     };
     itemsRow.appendChild(btn);
   });
 
-  // 2. تحديث الواجهة عند فتح الكاميرا بنجاح
   scene.addEventListener('enter-vr', () => {
     if (scene.is('ar-mode')) {
-      btnCustomAr.style.display = 'none'; // إخفاء زر التشغيل
-      bottomPanel.style.display = 'block'; // إظهار قائمة المجسمات
-      btnPlaceModel.style.display = 'block'; // إظهار زر الإسقاط
-      
+      btnCustomAr.style.display = 'none'; 
+      bottomPanel.style.display = 'block'; 
+      btnPlaceModel.style.display = 'block'; 
       instructionBadge.style.display = 'block';
-      instructionBadge.innerText = "وجّه الكاميرا أمامك واضغط على زر الإسقاط";
-      instructionBadge.style.background = "rgba(0, 0, 0, 0.7)";
-      instructionBadge.style.color = "var(--sand)";
+      instructionBadge.innerText = "وجّه الكاميرا أمامك واضغط على الزر للإسقاط";
     }
   });
 
-  // 3. دالة الإسقاط الفوري (عند الضغط على زر ➕ الإسقاط)
   btnPlaceModel.addEventListener('click', (e) => {
     e.stopPropagation();
 
-    // حساب النقطة على بعد 1.5 متر أمام المستخدم
+    // إظهار اللودنق أثناء وضع المجسم
+    arLoading.style.display = 'block';
+    btnPlaceModel.style.display = 'none';
+
     const camera3D = cameraEl.object3D;
     const direction = new AFRAME.THREE.Vector3(0, 0, -1);
     direction.applyQuaternion(camera3D.quaternion);
-    direction.y = 0; // إبقاء الاتجاه أفقياً
+    direction.y = 0; 
     direction.normalize();
 
-    const distance = 1.5; // المسافة بالأمتار
+    const distance = 1.5; 
     const spawnPos = new AFRAME.THREE.Vector3();
     spawnPos.copy(camera3D.position).add(direction.multiplyScalar(distance));
-    spawnPos.y = 0; // تثبيت المجسم على الأرض
+    spawnPos.y = 0; 
 
-    // إنشاء المجسم وإضافته للمشهد
     const model = document.createElement('a-entity');
     model.setAttribute('gltf-model', selectedSrc);
     model.setAttribute('position', `${spawnPos.x} 0 ${spawnPos.z}`);
+    model.setAttribute('scale', '0 0 0'); 
     
-    // تأثير حركي لظهور المجسم بشكل جميل
-    model.setAttribute('scale', '0 0 0');
-    model.setAttribute('animation', {
-      property: 'scale', to: selectedScale, dur: 800, easing: 'easeOutElastic'
+    // إخفاء اللودنق عند اكتمال تحميل المجسم في الواقع المعزز
+    model.addEventListener('model-loaded', () => {
+      arLoading.style.display = 'none';
+      btnPlaceModel.style.display = 'block';
+      model.setAttribute('animation', {
+        property: 'scale', to: selectedScale, dur: 600, easing: 'easeOutElastic'
+      });
+      instructionBadge.innerText = "تحريك: بإصبع. تدوير وتكبير: بإصبعين.";
     });
 
     scene.appendChild(model);
-    
-    // جعل هذا المجسم هو "النشط" للتدوير والتكبير
     activeModel = model; 
-    
-    instructionBadge.innerText = "تمت الإضافة! اسحب الشاشة للتدوير أو أضف مجسماً آخر";
   });
 
-  // 4. نظام التدوير والتكبير للمجسم النشط
-  let startX = 0;
+  // --- نظام الحركة المتقدم (تحريك، تدوير، تكبير) ---
+  let startX = 0, startY = 0;
   let initialRot = 0;
-  let initialPinchDist = 0;
+  let initialPinchDist = 0, initialAngle = 0;
   let initialScaleObj = {x:0, y:0, z:0};
+  let initialPosObj = {x:0, y:0, z:0};
 
   scene.addEventListener('touchstart', (e) => {
     if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn')) return;
     
     if (e.touches.length === 1) {
       startX = e.touches[0].pageX;
-      initialRot = activeModel.object3D.rotation.y;
+      startY = e.touches[0].pageY;
+      initialPosObj = activeModel.object3D.position.clone();
     } else if (e.touches.length === 2) {
-      initialPinchDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+      const t1 = e.touches[0], t2 = e.touches[1];
+      initialPinchDist = Math.hypot(t1.pageX - t2.pageX, t1.pageY - t2.pageY);
+      initialAngle = Math.atan2(t2.pageY - t1.pageY, t2.pageX - t1.pageX);
       initialScaleObj = activeModel.object3D.scale.clone();
+      initialRot = activeModel.object3D.rotation.y;
     }
   });
 
@@ -109,16 +112,32 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn')) return;
     
     if (e.touches.length === 1) {
-      // تدوير
-      const deltaX = e.touches[0].pageX - startX;
-      activeModel.object3D.rotation.y = initialRot + deltaX * 0.01;
+      // السحب بإصبع واحد: تحريك المجسم على الأرض
+      const deltaX = (e.touches[0].pageX - startX) * 0.003;
+      const deltaY = (e.touches[0].pageY - startY) * 0.003;
+
+      const camHeading = cameraEl.object3D.rotation.y;
+      const moveX = Math.cos(camHeading) * deltaX + Math.sin(camHeading) * deltaY;
+      const moveZ = -Math.sin(camHeading) * deltaX + Math.cos(camHeading) * deltaY;
+
+      activeModel.object3D.position.x = initialPosObj.x + moveX;
+      activeModel.object3D.position.z = initialPosObj.z + moveZ;
+      
     } else if (e.touches.length === 2) {
-      // تكبير / تصغير
-      const dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+      // إصبعين معاً: تكبير (Pinch) وتدوير (Twist)
+      const t1 = e.touches[0], t2 = e.touches[1];
+      const dist = Math.hypot(t1.pageX - t2.pageX, t1.pageY - t2.pageY);
+      const angle = Math.atan2(t2.pageY - t1.pageY, t2.pageX - t1.pageX);
+
+      // التكبير والتصغير
       const scaleFactor = dist / initialPinchDist;
       activeModel.object3D.scale.set(
         initialScaleObj.x * scaleFactor, initialScaleObj.y * scaleFactor, initialScaleObj.z * scaleFactor
       );
+
+      // التدوير
+      const angleDiff = angle - initialAngle;
+      activeModel.object3D.rotation.y = initialRot - angleDiff;
     }
   });
 });
