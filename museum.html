@@ -17,7 +17,6 @@
     }
     .btn-place-model:active { transform: translateX(-50%) scale(0.95); }
     
-    /* لودنق المتحف */
     #ar-loading {
       display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       background: rgba(0,0,0,0.8); color: var(--sand); padding: 20px 40px; border-radius: 12px;
@@ -25,7 +24,7 @@
     }
   </style>
 </head>
-<body>
+<body style="touch-action: none;"> <!-- منع المتصفح من التدخل في اللمس -->
 
   <div id="ui-overlay">
     <div class="top-bar">
@@ -56,9 +55,12 @@
     webxr="requiredFeatures: local-floor, dom-overlay; overlayElement: #ui-overlay;"
     renderer="colorManagement: true; physicallyCorrectLights: true;"
     vr-mode-ui="enterARButton: #btn-custom-ar; enterVRButton: #hidden-vr">
+    
     <a-light type="ambient" intensity="1"></a-light>
     <a-light type="directional" position="1 2 0.5" intensity="1.2" castShadow="true"></a-light>
-    <a-camera position="0 1.6 0"></a-camera>
+    
+    <!-- السر هنا: إيقاف touchEnabled لكي لا تسرق الكاميرا اللمسات -->
+    <a-camera position="0 1.6 0" look-controls="touchEnabled: false"></a-camera>
   </a-scene>
 
   <script src="js/museum.js"></script>
