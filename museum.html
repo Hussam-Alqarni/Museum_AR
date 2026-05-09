@@ -65,10 +65,10 @@
 
   <button id="hidden-vr" style="display: none;"></button>
 
-  <!-- استخدام optionalFeatures بدلاً من requiredFeatures يمنع المتصفح من حظر الكاميرا -->
+  <!-- إعادة hit-test ليكون إجبارياً لكي يقوم الهاتف بتشغيل حساسات الأسطح -->
   <a-scene 
     id="webxr-scene"
-    webxr="optionalFeatures: hit-test, dom-overlay; overlayElement: #ui-overlay;"
+    webxr="requiredFeatures: hit-test, dom-overlay; overlayElement: #ui-overlay;"
     renderer="colorManagement: true; physicallyCorrectLights: true;"
     vr-mode-ui="enterARButton: #btn-custom-ar; enterVRButton: #hidden-vr">
     

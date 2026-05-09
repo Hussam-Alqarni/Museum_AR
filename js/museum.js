@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // تحديث الإرشادات ومراقبة الأسطح
+  // تحديث الإرشادات ومراقبة الأسطح (تم تحديث النص هنا)
   setInterval(() => {
     if (scene.is('ar-mode')) {
       if (reticle.getAttribute('visible')) {
@@ -64,19 +64,36 @@ document.addEventListener("DOMContentLoaded", () => {
            instructionBadge.innerText = "بإصبع للتدوير، وبإصبعين للتكبير";
         }
       } else {
-        instructionBadge.innerText = "امسح الأرض أو الجدار ببطء لتظهر الدائرة...";
         instructionBadge.style.background = "rgba(0, 0, 0, 0.6)";
         instructionBadge.style.color = "var(--sand)";
+        // إرشاد المستخدم أنه يستطيع الضغط حتى لو لم تظهر الدائرة
+        instructionBadge.innerText = "امسح الأرض.. (أو اضغط إسقاط مباشرة)";
       }
     }
   }, 500);
 
-  // دالة الإسقاط وإلصاق المجسم بالسطح (طاولة، جدار، أرض)
+  // دالة الإسقاط الهجينة (هنا التعديل السحري)
   function placeModelAtReticle(isMove = false) {
-    if (!reticle.getAttribute('visible')) return;
+    let pos, rot;
 
-    const pos = reticle.getAttribute('position');
-    const rot = reticle.getAttribute('rotation'); // يأخذ زاوية الجدار أو الطاولة
+    // إذا الدائرة موجودة، نأخذ إحداثياتها
+    if (reticle.getAttribute('visible')) {
+      pos = reticle.getAttribute('position');
+      rot = reticle.getAttribute('rotation');
+    } else {
+      // الخطة البديلة: إذا لم تظهر الدائرة، نسقط المجسم أمام الكاميرا بـ 1.2 متر
+      const cameraEl = document.querySelector('a-camera');
+      const camera3D = cameraEl.object3D;
+      const direction = new AFRAME.THREE.Vector3(0, 0, -1);
+      direction.applyQuaternion(camera3D.quaternion);
+      direction.y = 0; 
+      direction.normalize();
+
+      pos = new AFRAME.THREE.Vector3();
+      pos.copy(camera3D.position).add(direction.multiplyScalar(1.2)); 
+      pos.y = -0.5; // محاولة تقريبية لمستوى الأرض
+      rot = { x: 0, y: 0, z: 0 };
+    }
 
     let targetModel;
     
@@ -128,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
       initialPinchDist = Math.hypot(t1.pageX - t2.pageX, t1.pageY - t2.pageY);
       initialAngle = Math.atan2(t2.pageY - t1.pageY, t2.pageX - t1.pageX);
       initialScaleObj = activeModel.object3D.scale.clone();
-      initialRot = activeModel.object3D.rotation.y; // إذا أراد المستخدم التدوير بإصبعين
+      initialRot = activeModel.object3D.rotation.y; 
     }
   }, { passive: false });
 
@@ -137,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     if (e.touches.length === 1) {
-      // تمرير بإصبع واحد للتدوير السلس (بدلاً من التحريك العشوائي)
+      // تمرير بإصبع واحد للتدوير السلس 
       const deltaX = e.touches[0].pageX - startX;
       activeModel.object3D.rotation.y = initialRot + (deltaX * 0.01);
       
