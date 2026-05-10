@@ -8,25 +8,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   
-  <!-- مهم جداً: ترقية مكتبة A-Frame لنسخة 1.4.2 لحل مشاكل الكاميرا في الأندرويد -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   
   <style>
     .a-enter-vr { display: none !important; }
     
     .ar-action-btn {
-      background: var(--accent); color: #0b0908; border: none; padding: 12px 20px;
-      border-radius: 999px; font-weight: bold; font-size: 1rem; font-family: inherit;
-      box-shadow: 0 4px 15px rgba(209, 177, 90, 0.4); cursor: pointer; transition: 0.1s;
-      pointer-events: auto;
-    }
-    .ar-action-btn:active { transform: scale(0.95); }
-    
-    /* أزرار التحكم (إضافة ونقل) */
-    #action-buttons {
       position: absolute; bottom: 140px; left: 50%; transform: translateX(-50%);
-      display: none; gap: 10px; z-index: 1000; width: max-content;
+      background: var(--accent); color: #0b0908; border: none; padding: 15px 30px;
+      border-radius: 999px; font-weight: bold; font-size: 1.1rem; font-family: inherit;
+      box-shadow: 0 4px 15px rgba(209, 177, 90, 0.4); cursor: pointer; transition: 0.1s;
+      pointer-events: auto; z-index: 1000; display: none;
     }
+    .ar-action-btn:active { transform: translateX(-50%) scale(0.95); }
 
     #ar-loading {
       display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -52,11 +46,7 @@
 
     <div id="ar-loading">جاري تجهيز القطعة...</div>
 
-    <!-- مجموعة أزرار التحكم الذكية -->
-    <div id="action-buttons">
-      <button id="btn-place-model" class="ar-action-btn">➕ إسقاط جديد</button>
-      <button id="btn-move-model" class="ar-action-btn" style="background: #3d6b52; color: white; display: none;">📍 نقل لمكان الدائرة</button>
-    </div>
+    <button id="btn-place-model" class="ar-action-btn">➕ إسقاط المجسم هنا</button>
 
     <div class="bottom-bar" id="bottom-panel" style="display: none;">
       <div class="items-carousel" id="museum-items"></div>
@@ -65,26 +55,19 @@
 
   <button id="hidden-vr" style="display: none;"></button>
 
-  <!-- إعادة hit-test ليكون إجبارياً لكي يقوم الهاتف بتشغيل حساسات الأسطح -->
+  <!-- جعلنا local-floor اختياري، لكي يحسب الأرض بشكل تقريبي إذا لم يجدها، ويفتح الكاميرا فوراً -->
   <a-scene 
     id="webxr-scene"
-    webxr="requiredFeatures: hit-test, dom-overlay; overlayElement: #ui-overlay;"
+    webxr="optionalFeatures: local-floor, dom-overlay; overlayElement: #ui-overlay;"
     renderer="colorManagement: true; physicallyCorrectLights: true;"
     vr-mode-ui="enterARButton: #btn-custom-ar; enterVRButton: #hidden-vr">
     
     <a-light type="ambient" intensity="1"></a-light>
     <a-light type="directional" position="1 2 0.5" intensity="1.2" castShadow="true"></a-light>
     
+    <!-- منع الكاميرا من سرقة اللمسات -->
     <a-camera position="0 1.6 0" look-controls="touchEnabled: false"></a-camera>
 
-    <!-- نظام تتبع الأسطح (يطلق شعاع ليزر من الكاميرا) -->
-    <a-entity ar-hit-test="target:#reticle"></a-entity>
-    
-    <!-- الدائرة التي تلتصق بالجدران والطاولات -->
-    <a-entity id="reticle" visible="false">
-      <a-ring color="#d1b15a" radius-inner="0.08" radius-outer="0.12" rotation="-90 0 0"></a-ring>
-      <a-circle color="#d1b15a" radius="0.04" rotation="-90 0 0" opacity="0.8"></a-circle>
-    </a-entity>
   </a-scene>
 
   <script src="js/museum.js"></script>
