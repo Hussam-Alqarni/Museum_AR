@@ -2,7 +2,7 @@
 const ARTIFACTS = [
   { id: "tent", name: "الخيمة", src: "models/arabic_tent.glb", scale: "3 3 3" }, 
   { id: "dallah", name: "الدلة", src: "models/saudi_dallah.glb", scale: "0.5 0.5 0.5" }, 
-  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.1 0.1 0.1" } 
+  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.08 0.08 0.08" } 
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
