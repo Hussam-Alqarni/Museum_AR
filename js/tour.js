@@ -6,7 +6,7 @@ const ARTIFACTS = [
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
-  let currentStep = 0;
+  let foundItems = new Set(); 
   let isTransitioning = false; 
 
   const uiWelcome = document.getElementById('welcome-screen');
@@ -19,17 +19,28 @@ document.addEventListener("DOMContentLoaded", () => {
   const mvInfo = document.getElementById('viewer-info');
   const mvLoading = document.getElementById('mv-loading');
   const arWrapper = document.getElementById('arjs-scene-wrapper');
+  const btnNext = document.getElementById('btn-next');
+  
+  // متغير العداد
+  const discoveryCounter = document.getElementById('discovery-counter');
 
-  // إخفاء التحميل عند اكتمال المجسم
+  // دالة لتحديث نص العداد
+  function updateCounter() {
+    // تحويل الأرقام الإنجليزية إلى عربية لتناسب التصميم
+    const arabicNumbers = ['٠', '١', '٢', '٣', '٤'];
+    discoveryCounter.innerText = `القطع المستكشفة: ${arabicNumbers[foundItems.size]} / ٤`;
+  }
+
   mvElement.addEventListener('load', () => {
     mvLoading.style.display = 'none';
     mvElement.style.visibility = 'visible';
   });
 
-  // زر البدء
   document.getElementById('btn-start').addEventListener('click', () => {
     uiWelcome.style.display = 'none';
     uiScan.style.display = 'flex';
+    discoveryCounter.style.display = 'block'; // إظهار العداد
+    updateCounter();
     
     arWrapper.innerHTML = `
       <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
@@ -46,17 +57,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const marker = document.getElementById('m-' + i);
         if (marker) {
           marker.addEventListener('markerFound', () => {
-            if (currentStep === i && !isTransitioning) {
+            if (!isTransitioning) {
               isTransitioning = true;
+              foundItems.add(i); 
+              updateCounter(); // تحديث العداد فور إيجاد القطعة
+              
               arWrapper.style.display = 'none'; 
               uiScan.style.display = 'none';
               ui360.style.display = 'flex';
               
               mvElement.style.visibility = 'hidden';
-              mvLoading.style.display = 'flex'; // إظهار التحميل
+              mvLoading.style.display = 'flex'; 
               mvTitle.innerText = art.name;
               mvInfo.innerText = art.info;
               mvElement.src = art.src;
+
+              if (foundItems.size >= ARTIFACTS.length) {
+                btnNext.innerText = "إنهاء الجولة";
+              } else {
+                btnNext.innerText = "متابعة البحث عن باقي القطع";
+              }
             }
           });
         }
@@ -64,11 +84,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   });
 
-  // أزرار الرجوع
   document.getElementById('btn-back-home').addEventListener('click', () => {
-    arWrapper.innerHTML = ''; // إغلاق الكاميرا
+    arWrapper.innerHTML = ''; 
     uiScan.style.display = 'none';
     uiWelcome.style.display = 'flex';
+    discoveryCounter.style.display = 'none'; // إخفاء العداد
+    foundItems.clear(); 
+    updateCounter();
   });
 
   document.getElementById('btn-back-scan').addEventListener('click', () => {
@@ -83,17 +105,15 @@ document.addEventListener("DOMContentLoaded", () => {
     location.reload();
   });
 
-  // زر التالي
-  document.getElementById('btn-next').addEventListener('click', () => {
+  btnNext.addEventListener('click', () => {
     ui360.style.display = 'none';
     mvElement.src = "";
     mvElement.style.visibility = 'hidden';
-    
-    currentStep++;
     isTransitioning = false; 
     
-    if (currentStep >= ARTIFACTS.length) {
+    if (foundItems.size >= ARTIFACTS.length) {
       uiDone.style.display = 'flex';
+      discoveryCounter.style.display = 'none'; // إخفاء العداد في شاشة النهاية
     } else {
       arWrapper.style.display = 'block'; 
       uiScan.style.display = 'flex';
