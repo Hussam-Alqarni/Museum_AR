@@ -1,7 +1,8 @@
 const ARTIFACTS = [
   { id: "tent", name: "الخيمة العربية", src: "models/arabic_tent.glb", info: "تُعرف بـ 'بيت الشعر'، وهي تمثل التراث البدوي الأصيل." },
   { id: "dallah", name: "الدلة السعودية", src: "models/saudi_dallah.glb", info: "الرمز الأبرز للضيافة والكرم في المملكة لتقديم القهوة العربية." },
-  { id: "sword", name: "السيف العربي", src: "models/arabic_sword.glb", info: "يُعد السيف رمزاً للشجاعة، ويحضر بقوة في المناسبات و'العرضة السعودية'." }
+  { id: "sword", name: "السيف العربي", src: "models/arabic_sword.glb", info: "يُعد السيف رمزاً للشجاعة، ويحضر بقوة في المناسبات و'العرضة السعودية'." },
+  { id: "mubkhara", name: "المبخرة", src: "models/mubkhara.glb", info: "تعكس الكرم وحفاوة الاستقبال وطيب العود في الثقافة السعودية." }
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -35,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <a-marker id="m-0" type="pattern" url="markers/patt.hiro" emitevents="true"></a-marker>
         <a-marker id="m-1" type="pattern" url="markers/patt.kanji" emitevents="true"></a-marker>
         <a-marker id="m-2" type="pattern" url="markers/pattern-letterA.patt" emitevents="true"></a-marker>
+        <a-marker id="m-3" type="pattern" url="markers/pattern-mubkhara.patt" emitevents="true"></a-marker>
         <a-entity camera></a-entity>
       </a-scene>
     `;

@@ -1,8 +1,9 @@
-// الأحجام الجديدة: الخيمة ضخمة (3)، الدلة وسط (0.5)، السيف وسط ومنطقي (0.3)
+// تمت إضافة المبخرة بحجم منطقي (0.2)
 const ARTIFACTS = [
   { id: "tent", name: "الخيمة", src: "models/arabic_tent.glb", scale: "3 3 3" }, 
   { id: "dallah", name: "الدلة", src: "models/saudi_dallah.glb", scale: "0.5 0.5 0.5" }, 
-  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.08 0.08 0.08" } 
+  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.08 0.08 0.08" },
+  { id: "mubkhara", name: "المبخرة", src: "models/mubkhara.glb", scale: "0.2 0.2 0.2" }
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -87,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     scene.appendChild(targetModel);
-    activeModel = targetModel; // جعل المجسم الجديد هو المجسم النشط
+    activeModel = targetModel; 
   });
 
   // --- نظام الحركة: تحريك (إصبع)، تدوير وتكبير (إصبعين) ---
@@ -115,10 +116,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener('touchmove', (e) => {
     if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('a')) return;
-    e.preventDefault(); // لمنع المتصفح من الاهتزاز
+    e.preventDefault(); 
 
     if (e.touches.length === 1) {
-      // تمرير بإصبع واحد للتحريك على الأرض (يمين يسار أمام خلف)
       const deltaX = (e.touches[0].pageX - startX) * 0.004;
       const deltaY = (e.touches[0].pageY - startY) * 0.004;
 
@@ -134,13 +134,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const dist = Math.hypot(t1.pageX - t2.pageX, t1.pageY - t2.pageY);
       const angle = Math.atan2(t2.pageY - t1.pageY, t2.pageX - t1.pageX);
 
-      // التكبير (Pinch)
       const scaleFactor = dist / initialPinchDist;
       activeModel.object3D.scale.set(
         initialScaleObj.x * scaleFactor, initialScaleObj.y * scaleFactor, initialScaleObj.z * scaleFactor
       );
 
-      // التدوير (Twist)
       const angleDiff = angle - initialAngle;
       activeModel.object3D.rotation.y = initialRot - angleDiff;
     }

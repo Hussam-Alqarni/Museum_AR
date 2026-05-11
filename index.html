@@ -8,6 +8,8 @@
   <link rel="preload" href="models/arabic_tent.glb" as="fetch" crossorigin="anonymous">
   <link rel="preload" href="models/saudi_dallah.glb" as="fetch" crossorigin="anonymous">
   <link rel="preload" href="models/arabic_sword.glb" as="fetch" crossorigin="anonymous">
+  <link rel="preload" href="models/mubkhara.glb" as="fetch" crossorigin="anonymous">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;500;600;700&family=Tajawal:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -19,7 +21,6 @@
   <script type="module" src="https://unpkg.com/@google/model-viewer@3.4.0/dist/model-viewer.min.js"></script>
 
   <style>
-    /* تنسيق مؤشر التحميل وزر الرجوع العلوي */
     .top-back-btn {
       position: absolute; top: 20px; right: 20px; z-index: 100;
       background: rgba(18, 14, 11, 0.88); border: 1px solid rgba(245, 230, 200, 0.15);
@@ -50,14 +51,14 @@
           <h1>قطع تراث أمام عدستك</h1>
           <div class="welcome-rule" aria-hidden="true"></div>
           <p class="welcome-lead">
-            ثلاث وقفات: <strong>خيمة</strong>، ثم <strong>دلة</strong>، ثم <strong>سيف</strong>. تُشير الكاميرا إلى الرموز ليظهر المجسم وتنتقل لصفحة قراءة تاريخه.
+            أربع وقفات: <strong>خيمة</strong>، <strong>دلة</strong>، <strong>سيف</strong>، وأخيراً <strong>مبخرة</strong>. تُشير الكاميرا إلى الرموز ليظهر المجسم وتنتقل لصفحة قراءة تاريخه.
           </p>
         </header>
 
         <div class="welcome-block">
           <h2>قبل ما تفتح الكاميرا</h2>
           <ul class="step-rows">
-            <li><span class="step-num">١</span><span>جهّز الرموز الثلاثة بالترتيب، مطبوعة أو معروضة على شاشة أخرى.</span></li>
+            <li><span class="step-num">١</span><span>جهّز الرموز الأربعة بالترتيب، مطبوعة أو معروضة على شاشة أخرى.</span></li>
             <li><span class="step-num">٢</span><span>عند ظهور المجسم، ستنتقل لشاشة حرة لتكبيره وتدويره.</span></li>
             <li><span class="step-num">٣</span><span>بعد الانتهاء، ستتمكن من بناء متحفك الخاص!</span></li>
           </ul>
@@ -66,6 +67,7 @@
             <div class="marker-tile"><div class="marker-thumb"><img src="markers/hiro.png" alt="الخيمة" loading="lazy" /></div><p class="marker-caption">الخيمة <em>Hiro</em></p></div>
             <div class="marker-tile"><div class="marker-thumb"><img src="markers/kanji.png" alt="الدلة" loading="lazy" /></div><p class="marker-caption">الدلة <em>Kanji</em></p></div>
             <div class="marker-tile"><div class="marker-thumb"><img src="markers/pattern-letterA.png" alt="السيف" loading="lazy" /></div><p class="marker-caption">السيف <em>حرف A</em></p></div>
+            <div class="marker-tile"><div class="marker-thumb"><img src="markers/mubkhara.png" alt="المبخرة" loading="lazy" /></div><p class="marker-caption">المبخرة <em>صورة</em></p></div>
           </div>
         </div>
 
@@ -110,7 +112,7 @@
 
     <!-- شاشة النهاية -->
     <div id="done-screen">
-      <h2 id="done-title-done">انتهت الوقفات الثلاث</h2>
+      <h2 id="done-title-done">انتهت الوقفات الأربع</h2>
       <p class="done-copy">الآن يمكنك الدخول لتصميم متحفك الخاص وإضافة المجسمات بحرية في مساحتك الحقيقية.</p>
       <a href="museum.html" class="btn-primary" style="text-decoration: none; text-align: center; display: inline-block; margin-top: 1.5rem; padding: 1rem 2rem;">دخول المتحف الخاص</a>
       <button id="btn-restart-tour" class="top-back-btn" style="background: transparent; border:none; margin-top: 20px;">إعادة الجولة</button>
