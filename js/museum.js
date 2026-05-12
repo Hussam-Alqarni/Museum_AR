@@ -2,8 +2,8 @@
 const ARTIFACTS = [
   { id: "tent", name: "الخيمة", src: "models/arabic_tent.glb", scale: "18 18 18" }, 
   { id: "dallah", name: "الدلة", src: "models/saudi_dallah.glb", scale: "0.5 0.5 0.5" }, 
-  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.01 0.01 0.01" },
-  { id: "mubkhara", name: "المبخرة", src: "models/mubkhara.glb", scale: "0.01 0.01 0.01" }
+  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.005 0.005 0.005" },
+  { id: "mubkhara", name: "المبخرة", src: "models/mubkhara.glb", scale: "0.005 0.005 0.005" }
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
