@@ -1,13 +1,15 @@
-//الأحجام الجديدة  :
+// الأحجام المحدثة: تصغير إضافي ومكثف للسيف والمبخرة (0.01)
 const ARTIFACTS = [
   { id: "tent", name: "الخيمة", src: "models/arabic_tent.glb", scale: "18 18 18" }, 
   { id: "dallah", name: "الدلة", src: "models/saudi_dallah.glb", scale: "0.5 0.5 0.5" }, 
-  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.05 0.05 0.05" },
-  { id: "mubkhara", name: "المبخرة", src: "models/mubkhara.glb", scale: "0.05 0.05 0.05" }
+  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.01 0.01 0.01" },
+  { id: "mubkhara", name: "المبخرة", src: "models/mubkhara.glb", scale: "0.01 0.01 0.01" }
 ];
+
 document.addEventListener("DOMContentLoaded", () => {
   let selectedSrc = ARTIFACTS[0].src;
   let selectedScale = ARTIFACTS[0].scale;
+  let selectedId = ARTIFACTS[0].id; // متغير جديد لمعرفة هوية المجسم المختار
   let activeModel = null; 
 
   const itemsRow = document.getElementById('museum-items');
@@ -31,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.classList.add('active');
       selectedSrc = art.src;
       selectedScale = art.scale;
+      selectedId = art.id; // تحديث الهوية عند تغيير الاختيار
       
       if(scene.is('ar-mode')) {
         instructionBadge.innerText = `تم اختيار ${art.name} - اضغط إسقاط`;
@@ -52,14 +55,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // دالة الإسقاط المباشر (أمام المستخدم فوراً)
+  // دالة الإسقاط
   btnPlaceModel.addEventListener('click', (e) => {
     e.stopPropagation();
 
     arLoading.style.display = 'block';
     btnPlaceModel.style.display = 'none';
 
-    // حساب الإسقاط ليكون أمام الكاميرا بمسافة 1.2 متر
     const camera3D = cameraEl.object3D;
     const direction = new AFRAME.THREE.Vector3(0, 0, -1);
     direction.applyQuaternion(camera3D.quaternion);
@@ -68,11 +70,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const spawnPos = new AFRAME.THREE.Vector3();
     spawnPos.copy(camera3D.position).add(direction.multiplyScalar(1.2)); 
-    spawnPos.y = 0; // وضعه على مستوى الأرض
+    
+    // 💡 الشرط الجديد: إذا كان المجسم هو السيف، ارفعه مترين. غير ذلك، ضعه على الأرض (0)
+    let yPosition = (selectedId === "sword") ? 2 : 0;
+    spawnPos.y = yPosition; 
 
     const targetModel = document.createElement('a-entity');
     targetModel.setAttribute('gltf-model', selectedSrc);
-    targetModel.setAttribute('position', `${spawnPos.x} 0 ${spawnPos.z}`);
+    // استخدام الارتفاع الجديد
+    targetModel.setAttribute('position', `${spawnPos.x} ${spawnPos.y} ${spawnPos.z}`);
     targetModel.setAttribute('scale', '0 0 0'); 
     
     targetModel.addEventListener('model-loaded', () => {
@@ -90,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     activeModel = targetModel; 
   });
 
-  // --- نظام الحركة: تحريك (إصبع)، تدوير وتكبير (إصبعين) ---
+  // --- نظام الحركة ---
   let startX = 0, startY = 0;
   let initialRot = 0;
   let initialPinchDist = 0, initialAngle = 0;
@@ -125,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const moveX = Math.cos(camHeading) * deltaX + Math.sin(camHeading) * deltaY;
       const moveZ = -Math.sin(camHeading) * deltaX + Math.cos(camHeading) * deltaY;
 
+      // يتم تحريك المجسم على محوري X و Z فقط للحفاظ على ارتفاع السيف الثابت (2 متر)
       activeModel.object3D.position.x = initialPosObj.x + moveX;
       activeModel.object3D.position.z = initialPosObj.z + moveZ;
       
