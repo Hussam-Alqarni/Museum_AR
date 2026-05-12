@@ -1,4 +1,4 @@
-// الأحجام المحدثة: تصغير إضافي ومكثف للسيف والمبخرة (0.01) 
+// الأحجام المحدثة: تصغير إضافي ومكثف للسيف والمبخرة (0.01)  
 const ARTIFACTS = [
   { id: "tent", name: "الخيمة", src: "models/arabic_tent.glb", scale: "18 18 18" }, 
   { id: "dallah", name: "الدلة", src: "models/saudi_dallah.glb", scale: "0.5 0.5 0.5" }, 
