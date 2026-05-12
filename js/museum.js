@@ -1,4 +1,4 @@
-// الأحجام المحدثة: تصغير إضافي ومكثف للسيف والمبخرة (0.01)  
+// الأحجام المحدثة: تصغير إضافي ومكثف للسيف والمبخرة
 const ARTIFACTS = [
   { id: "tent", name: "الخيمة", src: "models/arabic_tent.glb", scale: "18 18 18" }, 
   { id: "dallah", name: "الدلة", src: "models/saudi_dallah.glb", scale: "0.5 0.5 0.5" }, 
@@ -9,7 +9,7 @@ const ARTIFACTS = [
 document.addEventListener("DOMContentLoaded", () => {
   let selectedSrc = ARTIFACTS[0].src;
   let selectedScale = ARTIFACTS[0].scale;
-  let selectedId = ARTIFACTS[0].id; //  لمعرفة هوية المجسم المختار
+  let selectedId = ARTIFACTS[0].id; // لمعرفة هوية المجسم المختار
   let activeModel = null; 
 
   const itemsRow = document.getElementById('museum-items');
@@ -71,8 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const spawnPos = new AFRAME.THREE.Vector3();
     spawnPos.copy(camera3D.position).add(direction.multiplyScalar(1.2)); 
     
-    // 💡 الشرط الجديد: إذا كان المجسم هو السيف، ارفعه مترين. غير ذلك، ضعه على الأرض (0)
-    let yPosition = (selectedId === "sword") ? 2 : 0;
+    // 💡 الشرط الجديد: إذا كان المجسم هو السيف، ارفعه 1.5 متر ليكون مرئياً في مستوى النظر. غير ذلك، ضعه على الأرض (0)
+    let yPosition = (selectedId === "sword") ? 1.5 : 0;
     spawnPos.y = yPosition; 
 
     const targetModel = document.createElement('a-entity');
@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const moveX = Math.cos(camHeading) * deltaX + Math.sin(camHeading) * deltaY;
       const moveZ = -Math.sin(camHeading) * deltaX + Math.cos(camHeading) * deltaY;
 
-      // يتم تحريك المجسم على محوري X و Z فقط للحفاظ على ارتفاع السيف الثابت (2 متر)
+      // يتم تحريك المجسم على محوري X و Z فقط للحفاظ على ارتفاع السيف الثابت
       activeModel.object3D.position.x = initialPosObj.x + moveX;
       activeModel.object3D.position.z = initialPosObj.z + moveZ;
       

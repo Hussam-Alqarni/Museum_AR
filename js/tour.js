@@ -35,6 +35,37 @@ document.addEventListener("DOMContentLoaded", () => {
     mvElement.style.visibility = 'visible';
   });
 
+  // 💡 الحل الجذري: الاستماع المباشر والدائم لأي ماركر يتم التقاطه
+  window.addEventListener('markerFound', (e) => {
+    if (isTransitioning) return; // منع التكرار السريع
+
+    const markerId = e.target.id;
+    const art = ARTIFACTS_MAP[markerId]; // مطابقة الماركر مع الخريطة
+
+    // إذا كان الماركر موجوداً في الخريطة، قم بفتح المجسم
+    if (art) {
+      isTransitioning = true;
+      foundItems.add(markerId); 
+      updateCounter();
+      
+      arWrapper.style.display = 'none'; 
+      uiScan.style.display = 'none';
+      ui360.style.display = 'flex';
+      
+      mvElement.style.visibility = 'hidden';
+      mvLoading.style.display = 'flex'; 
+      mvTitle.innerText = art.name;
+      mvInfo.innerText = art.info;
+      mvElement.src = art.src;
+
+      if (foundItems.size >= 4) {
+        btnNext.innerText = "إنهاء الجولة";
+      } else {
+        btnNext.innerText = "متابعة البحث عن باقي القطع";
+      }
+    }
+  });
+
   // زر البدء - يقوم بتوليد مشهد الكاميرا والماركرات
   document.getElementById('btn-start').addEventListener('click', () => {
     uiWelcome.style.display = 'none';
@@ -42,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     discoveryCounter.style.display = 'block';
     updateCounter();
     
-    // وضع الماركرات بمعرفات (IDs) مطابقة تماماً للخريطة في الأعلى
+    // وضع الماركرات. الكود الآن لا يحتاج لـ setTimeout أبداً
     arWrapper.innerHTML = `
       <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
         <a-marker id="marker-tent" type="pattern" url="markers/patt.hiro" emitevents="true"></a-marker>
@@ -52,43 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <a-entity camera></a-entity>
       </a-scene>
     `;
-
-    // إعطاء المتصفح ثانية واحدة ليبني الكاميرا، ثم نربط كل ماركر بمجسمه حصرياً
-    setTimeout(() => {
-      Object.keys(ARTIFACTS_MAP).forEach(markerId => {
-        const markerElement = document.getElementById(markerId);
-        
-        if (markerElement) {
-          // استماع مباشر وخاص بكل ماركر على حدة
-          markerElement.addEventListener('markerFound', () => {
-            if (isTransitioning) return; 
-            isTransitioning = true;
-            
-            const art = ARTIFACTS_MAP[markerId]; // جلب المجسم المرتبط بهذا الماركر فقط
-            
-            foundItems.add(markerId); 
-            updateCounter();
-            
-            arWrapper.style.display = 'none'; 
-            uiScan.style.display = 'none';
-            ui360.style.display = 'flex';
-            
-            mvElement.style.visibility = 'hidden';
-            mvLoading.style.display = 'flex'; 
-            mvTitle.innerText = art.name;
-            mvInfo.innerText = art.info;
-            mvElement.src = art.src;
-
-            // إذا اكتشفنا القطع الأربع جميعها
-            if (foundItems.size >= 4) {
-              btnNext.innerText = "إنهاء الجولة";
-            } else {
-              btnNext.innerText = "متابعة البحث عن باقي القطع";
-            }
-          });
-        }
-      });
-    }, 1000);
   });
 
   // أزرار التحكم والرجوع
