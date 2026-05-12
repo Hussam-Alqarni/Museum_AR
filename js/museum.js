@@ -2,8 +2,8 @@
 const ARTIFACTS = [
   { id: "tent", name: "الخيمة", src: "models/arabic_tent.glb", scale: "18 18 18" }, 
   { id: "dallah", name: "الدلة", src: "models/saudi_dallah.glb", scale: "0.5 0.5 0.5" }, 
-  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.5 0.5 0.5" },
-  { id: "mubkhara", name: "المبخرة", src: "models/mubkhara.glb", scale: "0.5 0.5 0.5" }
+  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.05 0.05 0.05" },
+  { id: "mubkhara", name: "المبخرة", src: "models/mubkhara.glb", scale: "0.05 0.05 0.05" }
 ];
 document.addEventListener("DOMContentLoaded", () => {
   let selectedSrc = ARTIFACTS[0].src;
