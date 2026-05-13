@@ -21,6 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const scene = document.querySelector('a-scene');
   const cameraEl = document.querySelector('a-camera');
   
+  // عناصر المنزلق الجديد للارتفاع
+  const heightCtrl = document.getElementById('height-ctrl');
+  const heightRange = document.getElementById('height-range');
+
   // توليد الأزرار
   ARTIFACTS.forEach((art, index) => {
     const btn = document.createElement('div');
@@ -47,11 +51,21 @@ document.addEventListener("DOMContentLoaded", () => {
       btnCustomAr.style.display = 'none'; 
       bottomPanel.style.display = 'block'; 
       btnPlaceModel.style.display = 'block'; 
+      heightCtrl.style.display = 'flex'; // إظهار منزلق الارتفاع
       
       instructionBadge.style.display = 'block';
       instructionBadge.innerText = "وجّه الكاميرا للأسفل واضغط زر الإسقاط";
       instructionBadge.style.background = "rgba(0, 0, 0, 0.7)";
       instructionBadge.style.color = "var(--sand)";
+    }
+  });
+
+  // التحكم الديناميكي في الارتفاع عند تحريك المنزلق
+  heightRange.addEventListener('input', (e) => {
+    if (activeModel) {
+      const newY = parseFloat(e.target.value);
+      activeModel.object3D.position.y = newY; // تعديل الارتفاع فقط
+      instructionBadge.innerText = `الارتفاع: ${newY.toFixed(2)} م`;
     }
   });
 
@@ -62,6 +76,9 @@ document.addEventListener("DOMContentLoaded", () => {
     arLoading.style.display = 'block';
     btnPlaceModel.style.display = 'none';
 
+    // تصفير المنزلق ليكون المجسم على الأرض دائماً عند أول إسقاط
+    heightRange.value = 0; 
+
     const camera3D = cameraEl.object3D;
     const direction = new AFRAME.THREE.Vector3(0, 0, -1);
     direction.applyQuaternion(camera3D.quaternion);
@@ -71,8 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const spawnPos = new AFRAME.THREE.Vector3();
     spawnPos.copy(camera3D.position).add(direction.multiplyScalar(1.2)); 
     
-    // 💡 تم تعديل الارتفاع: الآن جميع القطع بما فيها السيف تظهر على نفس مستوى الأرض (0)
-    spawnPos.y = 0; 
+    // إعطاء الارتفاع الافتراضي من المنزلق (والذي سيكون 0)
+    spawnPos.y = parseFloat(heightRange.value); 
 
     const targetModel = document.createElement('a-entity');
     targetModel.setAttribute('gltf-model', selectedSrc);
@@ -86,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       targetModel.setAttribute('animation', {
         property: 'scale', to: selectedScale, dur: 600, easing: 'easeOutElastic'
       });
-      instructionBadge.innerText = "تحريك: إصبع. تدوير وتكبير: إصبعين.";
+      instructionBadge.innerText = "تحريك: إصبع. دوران/حجم: إصبعين. الارتفاع: شريط الجانب.";
       instructionBadge.style.background = "rgba(212, 175, 55, 0.9)";
       instructionBadge.style.color = "black";
     });
@@ -103,7 +120,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let initialPosObj = {x:0, y:0, z:0};
 
   window.addEventListener('touchstart', (e) => {
-    if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('a')) return;
+    // تم إضافة height-range للاستثناء حتى لا يتدخل مع تحريك المجسم
+    if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('a') || e.target.id === 'height-range') return;
     
     if (e.touches.length === 1) {
       startX = e.touches[0].pageX;
@@ -119,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }, { passive: false });
 
   window.addEventListener('touchmove', (e) => {
-    if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('a')) return;
+    if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('a') || e.target.id === 'height-range') return;
     e.preventDefault(); 
 
     if (e.touches.length === 1) {
@@ -130,6 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const moveX = Math.cos(camHeading) * deltaX + Math.sin(camHeading) * deltaY;
       const moveZ = -Math.sin(camHeading) * deltaX + Math.cos(camHeading) * deltaY;
 
+      // تحديث محوري X و Z فقط دون المساس بـ Y (للحفاظ على الارتفاع المختار من المنزلق)
       activeModel.object3D.position.x = initialPosObj.x + moveX;
       activeModel.object3D.position.z = initialPosObj.z + moveZ;
       

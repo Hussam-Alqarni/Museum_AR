@@ -44,6 +44,11 @@
       تشغيل كاميرا الواقع المعزز
     </button>
 
+    <div class="height-slider-container" id="height-ctrl">
+      <span class="slider-label">الارتفاع</span>
+      <input type="range" id="height-range" min="0" max="3" step="0.05" value="0">
+    </div>
+
     <div id="ar-loading">جاري تجهيز القطعة...</div>
 
     <button id="btn-place-model" class="ar-action-btn">➕ إسقاط المجسم هنا</button>
@@ -55,7 +60,6 @@
 
   <button id="hidden-vr" style="display: none;"></button>
 
-  <!-- جعلنا local-floor اختياري، لكي يحسب الأرض بشكل تقريبي إذا لم يجدها، ويفتح الكاميرا فوراً -->
   <a-scene 
     id="webxr-scene"
     webxr="optionalFeatures: local-floor, dom-overlay; overlayElement: #ui-overlay;"
@@ -65,7 +69,6 @@
     <a-light type="ambient" intensity="1"></a-light>
     <a-light type="directional" position="1 2 0.5" intensity="1.2" castShadow="true"></a-light>
     
-    <!-- منع الكاميرا من سرقة اللمسات -->
     <a-camera position="0 1.6 0" look-controls="touchEnabled: false"></a-camera>
 
   </a-scene>

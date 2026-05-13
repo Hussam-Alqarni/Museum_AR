@@ -128,3 +128,39 @@ body {
 
 .ar-item-btn { flex: 0 0 85px; height: 85px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line-subtle); display: flex; align-items: center; justify-content: center; color: var(--text); font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
 .ar-item-btn.active { border-color: var(--accent); background: rgba(209, 177, 90, 0.15); color: var(--accent); transform: scale(1.05); }
+
+/* === التعديل الجديد: تنسيقات منزلق الارتفاع === */
+.height-slider-container {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  z-index: 1000;
+  display: none; /* مخفي افتراضياً، يظهر في وضع AR */
+}
+
+#height-range {
+  writing-mode: bt-lr;
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  width: 8px;
+  height: 200px;
+  accent-color: var(--accent);
+  cursor: grab;
+}
+
+.slider-label {
+  color: var(--text);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.85rem;
+  font-weight: bold;
+  background: rgba(0,0,0,0.6);
+  padding: 4px 10px;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--line-subtle);
+}
