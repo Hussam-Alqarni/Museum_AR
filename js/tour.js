@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   });
 
-  // أزرار التحكم والرجوع
+  // أزرار التحكم والرجوع 
   document.getElementById('btn-back-home').addEventListener('click', () => {
     window.location.reload(); 
   });
