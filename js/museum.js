@@ -1,4 +1,3 @@
-// الأحجام المحدثة: تصغير السيف 3 مرات ليصبح (0.03)
 const ARTIFACTS = [
   { id: "tent", name: "الخيمة", src: "models/arabic_tent.glb", scale: "18 18 18" }, 
   { id: "dallah", name: "الدلة", src: "models/saudi_dallah.glb", scale: "0.5 0.5 0.5" }, 
@@ -9,7 +8,7 @@ const ARTIFACTS = [
 document.addEventListener("DOMContentLoaded", () => {
   let selectedSrc = ARTIFACTS[0].src;
   let selectedScale = ARTIFACTS[0].scale;
-  let selectedId = ARTIFACTS[0].id; // لمعرفة هوية المجسم المختار
+  let selectedId = ARTIFACTS[0].id; 
   let activeModel = null; 
 
   const itemsRow = document.getElementById('museum-items');
@@ -21,11 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const scene = document.querySelector('a-scene');
   const cameraEl = document.querySelector('a-camera');
   
-  // عناصر المنزلق الجديد للارتفاع
+  // حماية إضافية: البحث عن المنزلق
   const heightCtrl = document.getElementById('height-ctrl');
   const heightRange = document.getElementById('height-range');
 
-  // توليد الأزرار
   ARTIFACTS.forEach((art, index) => {
     const btn = document.createElement('div');
     btn.className = 'ar-item-btn' + (index === 0 ? ' active' : '');
@@ -37,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.classList.add('active');
       selectedSrc = art.src;
       selectedScale = art.scale;
-      selectedId = art.id; // تحديث الهوية عند تغيير الاختيار
+      selectedId = art.id; 
       
       if(scene.is('ar-mode')) {
         instructionBadge.innerText = `تم اختيار ${art.name} - اضغط إسقاط`;
@@ -51,7 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
       btnCustomAr.style.display = 'none'; 
       bottomPanel.style.display = 'block'; 
       btnPlaceModel.style.display = 'block'; 
-      heightCtrl.style.display = 'flex'; // إظهار منزلق الارتفاع
+      
+      // إظهار الشريط فقط إذا كان موجوداً لتجنب انهيار الكود
+      if (heightCtrl) { heightCtrl.style.display = 'flex'; }
       
       instructionBadge.style.display = 'block';
       instructionBadge.innerText = "وجّه الكاميرا للأسفل واضغط زر الإسقاط";
@@ -60,24 +60,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // التحكم الديناميكي في الارتفاع عند تحريك المنزلق
-  heightRange.addEventListener('input', (e) => {
-    if (activeModel) {
-      const newY = parseFloat(e.target.value);
-      activeModel.object3D.position.y = newY; // تعديل الارتفاع فقط
-      instructionBadge.innerText = `الارتفاع: ${newY.toFixed(2)} م`;
-    }
-  });
+  if (heightRange) {
+    heightRange.addEventListener('input', (e) => {
+      if (activeModel) {
+        const newY = parseFloat(e.target.value);
+        activeModel.object3D.position.y = newY; 
+        instructionBadge.innerText = `الارتفاع: ${newY.toFixed(2)} م`;
+      }
+    });
+  }
 
-  // دالة الإسقاط
   btnPlaceModel.addEventListener('click', (e) => {
     e.stopPropagation();
 
     arLoading.style.display = 'block';
     btnPlaceModel.style.display = 'none';
 
-    // تصفير المنزلق ليكون المجسم على الأرض دائماً عند أول إسقاط
-    heightRange.value = 0; 
+    // تحديد الارتفاع الافتراضي بأمان تام
+    let startY = 0;
+    if (heightRange) {
+      heightRange.value = 0; 
+      startY = parseFloat(heightRange.value) || 0;
+    }
 
     const camera3D = cameraEl.object3D;
     const direction = new AFRAME.THREE.Vector3(0, 0, -1);
@@ -87,13 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const spawnPos = new AFRAME.THREE.Vector3();
     spawnPos.copy(camera3D.position).add(direction.multiplyScalar(1.2)); 
-    
-    // إعطاء الارتفاع الافتراضي من المنزلق (والذي سيكون 0)
-    spawnPos.y = parseFloat(heightRange.value); 
+    spawnPos.y = startY; 
 
     const targetModel = document.createElement('a-entity');
     targetModel.setAttribute('gltf-model', selectedSrc);
-    // استخدام الارتفاع الموحد
     targetModel.setAttribute('position', `${spawnPos.x} ${spawnPos.y} ${spawnPos.z}`);
     targetModel.setAttribute('scale', '0 0 0'); 
     
@@ -103,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
       targetModel.setAttribute('animation', {
         property: 'scale', to: selectedScale, dur: 600, easing: 'easeOutElastic'
       });
-      instructionBadge.innerText = "تحريك: إصبع. دوران/حجم: إصبعين. الارتفاع: شريط الجانب.";
+      instructionBadge.innerText = "يمكنك تغيير ارتفاع القطعة من الشريط الجانبي.";
       instructionBadge.style.background = "rgba(212, 175, 55, 0.9)";
       instructionBadge.style.color = "black";
     });
@@ -120,7 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let initialPosObj = {x:0, y:0, z:0};
 
   window.addEventListener('touchstart', (e) => {
-    // تم إضافة height-range للاستثناء حتى لا يتدخل مع تحريك المجسم
     if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('a') || e.target.id === 'height-range') return;
     
     if (e.touches.length === 1) {
@@ -148,7 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const moveX = Math.cos(camHeading) * deltaX + Math.sin(camHeading) * deltaY;
       const moveZ = -Math.sin(camHeading) * deltaX + Math.cos(camHeading) * deltaY;
 
-      // تحديث محوري X و Z فقط دون المساس بـ Y (للحفاظ على الارتفاع المختار من المنزلق)
       activeModel.object3D.position.x = initialPosObj.x + moveX;
       activeModel.object3D.position.z = initialPosObj.z + moveZ;
       

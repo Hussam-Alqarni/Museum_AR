@@ -164,3 +164,39 @@ body {
   backdrop-filter: blur(4px);
   border: 1px solid var(--line-subtle);
 }
+
+/* === تنسيقات منزلق الارتفاع === */
+.height-slider-container {
+  position: absolute;
+  left: 15px; /* تم نقله لليسار لسهولة الاستخدام وعدم تعارضه مع القوائم */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 99999;
+  display: none; /* يظهره كود JS فقط في وضع الـ AR */
+}
+
+#height-range {
+  -webkit-appearance: slider-vertical;
+  appearance: auto;
+  width: 15px;
+  height: 200px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+.slider-label {
+  color: var(--text);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.85rem;
+  font-weight: bold;
+  background: rgba(0,0,0,0.6);
+  padding: 4px 8px;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--line-subtle);
+}
