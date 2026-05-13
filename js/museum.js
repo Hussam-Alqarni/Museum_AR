@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedScale = ARTIFACTS[0].scale;
   let selectedId = ARTIFACTS[0].id; 
   let activeModel = null; 
+  let isTourMode = false; // 💡 متغير لتتبع وضع التجول
 
   const itemsRow = document.getElementById('museum-items');
   const instructionBadge = document.getElementById('ar-instruction');
@@ -19,10 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const arLoading = document.getElementById('ar-loading');
   const scene = document.querySelector('a-scene');
   const cameraEl = document.querySelector('a-camera');
+  const topBar = document.querySelector('.top-bar');
   
-  // شريط الارتفاع
+  // عناصر الشريط والتجول
   const heightCtrl = document.getElementById('height-ctrl');
   const heightRange = document.getElementById('height-range');
+  const btnStartTour = document.getElementById('btn-start-tour');
+  const btnEndTour = document.getElementById('btn-end-tour');
+  const thankYouScreen = document.getElementById('thank-you-screen');
 
   ARTIFACTS.forEach((art, index) => {
     const btn = document.createElement('div');
@@ -37,14 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
       selectedScale = art.scale;
       selectedId = art.id; 
       
-      // 💡 الميزة المطلوبة: تصفير الشريط فوراً عند اختيار مجسم جديد
-      if (heightRange) {
-        heightRange.value = 0;
-      }
-      
-      if(scene.is('ar-mode')) {
-        instructionBadge.innerText = `تم اختيار ${art.name} - اضغط إسقاط`;
-      }
+      if (heightRange) heightRange.value = 0;
+      if (scene.is('ar-mode')) instructionBadge.innerText = `تم اختيار ${art.name} - اضغط إسقاط`;
     };
     itemsRow.appendChild(btn);
   });
@@ -55,7 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
       bottomPanel.style.display = 'block'; 
       btnPlaceModel.style.display = 'block'; 
       
-      if (heightCtrl) { heightCtrl.style.display = 'flex'; }
+      if (heightCtrl) heightCtrl.style.display = 'flex'; 
+      if (btnStartTour) btnStartTour.style.display = 'block'; // إظهار زر بدء التجول
       
       instructionBadge.style.display = 'block';
       instructionBadge.innerText = "وجّه الكاميرا للأسفل واضغط زر الإسقاط";
@@ -64,7 +64,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // --- برمجة الشريط (قراءة القيمة لحظياً) ---
+  // 💡 برمجة زر بدء التجول
+  if (btnStartTour) {
+    btnStartTour.addEventListener('click', (e) => {
+      e.stopPropagation();
+      isTourMode = true; // تفعيل وضع التجول (لتجميد المجسمات)
+      
+      // إخفاء جميع عناصر واجهة المستخدم
+      bottomPanel.style.display = 'none';
+      if (heightCtrl) heightCtrl.style.display = 'none';
+      btnPlaceModel.style.display = 'none';
+      topBar.style.display = 'none';
+      btnStartTour.style.display = 'none';
+      
+      // إظهار زر إنهاء التجول الصغير
+      btnEndTour.style.display = 'block';
+    });
+  }
+
+  // 💡 برمجة زر إنهاء التجول
+  if (btnEndTour) {
+    btnEndTour.addEventListener('click', (e) => {
+      e.stopPropagation();
+      btnEndTour.style.display = 'none';
+      thankYouScreen.style.display = 'flex'; // إظهار شاشة الشكر
+
+      // الانتظار 3.5 ثوانٍ ثم العودة للرئيسية بسلاسة
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 3500);
+    });
+  }
+
+  // برمجة الشريط 
   if (heightRange) {
     heightRange.addEventListener('input', (e) => {
       if (activeModel) {
@@ -77,14 +109,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   btnPlaceModel.addEventListener('click', (e) => {
     e.stopPropagation();
-
     arLoading.style.display = 'block';
     btnPlaceModel.style.display = 'none';
 
-    // 💡 تصفير الشريط أيضاً عند الإسقاط لضمان الهبوط على الأرض
-    if (heightRange) {
-      heightRange.value = 0;
-    }
+    if (heightRange) heightRange.value = 0;
 
     const camera3D = cameraEl.object3D;
     const direction = new AFRAME.THREE.Vector3(0, 0, -1);
@@ -94,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const spawnPos = new AFRAME.THREE.Vector3();
     spawnPos.copy(camera3D.position).add(direction.multiplyScalar(1.2)); 
-    spawnPos.y = 0; // البداية دائماً من الصفر
+    spawnPos.y = 0; 
 
     const targetModel = document.createElement('a-entity');
     targetModel.setAttribute('gltf-model', selectedSrc);
@@ -107,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
       targetModel.setAttribute('animation', {
         property: 'scale', to: selectedScale, dur: 600, easing: 'easeOutElastic'
       });
-      instructionBadge.innerText = "اسحب المجسم للتحريك، واستخدم الشريط للارتفاع.";
+      instructionBadge.innerText = "اسحب للتحريك، وضع المزيد من القطع، أو ابدأ التجول!";
       instructionBadge.style.background = "rgba(212, 175, 55, 0.9)";
       instructionBadge.style.color = "black";
     });
@@ -116,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
     activeModel = targetModel; 
   });
 
-  // --- نظام الحركة (مع عزل اللمس عن الشريط) ---
+  // --- نظام الحركة ---
   let startX = 0, startY = 0;
   let initialRot = 0;
   let initialPinchDist = 0, initialAngle = 0;
@@ -124,8 +152,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let initialPosObj = {x:0, y:0, z:0};
 
   window.addEventListener('touchstart', (e) => {
-    // 💡 الحماية: إذا كانت اللمسة على أزرار UI أو كبسولة الشريط (height-ctrl)، تجاهل حركة الكاميرا تماماً!
-    if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('#height-ctrl') || e.target.closest('a')) return;
+    // 💡 الحماية القصوى: إذا كنا في "وضع التجول"، تجاهل كل اللمسات تماماً ليتم قفل المجسمات!
+    if (isTourMode || !activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('#height-ctrl') || e.target.closest('a')) return;
     
     if (e.touches.length === 1) {
       startX = e.touches[0].pageX;
@@ -141,8 +169,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }, { passive: false });
 
   window.addEventListener('touchmove', (e) => {
-    // 💡 الحماية أثناء السحب
-    if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('#height-ctrl') || e.target.closest('a')) return;
+    // 💡 منع التحريك في وضع التجول
+    if (isTourMode || !activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('#height-ctrl') || e.target.closest('a')) return;
     e.preventDefault(); 
 
     if (e.touches.length === 1) {

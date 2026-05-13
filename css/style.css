@@ -174,3 +174,70 @@ body {
   transform: rotate(180deg);
   letter-spacing: 2px;
 }
+/* === أزرار وشاشة وضع التجول الحر === */
+#btn-start-tour {
+  position: absolute;
+  bottom: 130px;
+  left: 20px;
+  width: auto;
+  padding: 10px 20px;
+  font-size: 1rem;
+  display: none;
+  z-index: 1000;
+  background: var(--bg-panel);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  backdrop-filter: blur(8px);
+}
+
+#btn-end-tour {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(18, 14, 11, 0.88);
+  border: 1px solid #d1b15a;
+  color: #d1b15a;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-family: 'Tajawal', sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  display: none;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+  transition: 0.2s;
+}
+
+#btn-end-tour:active {
+  transform: scale(0.95);
+  background: var(--accent);
+  color: #000;
+}
+
+#thank-you-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(14, 11, 9, 0.97) 0%, rgba(8, 7, 6, 0.98) 100%);
+  padding: 24px;
+}
+
+#thank-you-screen h1 {
+  font-family: "Reem Kufi", "Tajawal", sans-serif;
+  font-size: 2.5rem;
+  color: var(--sand);
+  margin: 0 0 12px;
+}
+
+#thank-you-screen p {
+  max-width: 400px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin: 0;
+  font-size: 1.1rem;
+}
