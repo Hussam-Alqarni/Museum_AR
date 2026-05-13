@@ -1,8 +1,8 @@
-// الأحجام المحدثة: تصغير إضافي ومكثف للسيف والمبخرة
+// الأحجام المحدثة: تصغير السيف 3 مرات ليصبح (0.03)
 const ARTIFACTS = [
   { id: "tent", name: "الخيمة", src: "models/arabic_tent.glb", scale: "18 18 18" }, 
   { id: "dallah", name: "الدلة", src: "models/saudi_dallah.glb", scale: "0.5 0.5 0.5" }, 
-  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.09 0.09 0.09" },
+  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.03 0.03 0.03" },
   { id: "mubkhara", name: "المبخرة", src: "models/mubkhara.glb", scale: "0.005 0.005 0.005" }
 ];
 
@@ -71,13 +71,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const spawnPos = new AFRAME.THREE.Vector3();
     spawnPos.copy(camera3D.position).add(direction.multiplyScalar(1.2)); 
     
-    // 💡 الشرط الجديد: إذا كان المجسم هو السيف، ارفعه 1.5 متر ليكون مرئياً في مستوى النظر. غير ذلك، ضعه على الأرض (0)
-    let yPosition = (selectedId === "sword") ? 1.5 : 0;
-    spawnPos.y = yPosition; 
+    // 💡 تم تعديل الارتفاع: الآن جميع القطع بما فيها السيف تظهر على نفس مستوى الأرض (0)
+    spawnPos.y = 0; 
 
     const targetModel = document.createElement('a-entity');
     targetModel.setAttribute('gltf-model', selectedSrc);
-    // استخدام الارتفاع الجديد
+    // استخدام الارتفاع الموحد
     targetModel.setAttribute('position', `${spawnPos.x} ${spawnPos.y} ${spawnPos.z}`);
     targetModel.setAttribute('scale', '0 0 0'); 
     
@@ -131,7 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const moveX = Math.cos(camHeading) * deltaX + Math.sin(camHeading) * deltaY;
       const moveZ = -Math.sin(camHeading) * deltaX + Math.cos(camHeading) * deltaY;
 
-      // يتم تحريك المجسم على محوري X و Z فقط للحفاظ على ارتفاع السيف الثابت
       activeModel.object3D.position.x = initialPosObj.x + moveX;
       activeModel.object3D.position.z = initialPosObj.z + moveZ;
       
