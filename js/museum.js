@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedScale = ARTIFACTS[0].scale;
   let selectedId = ARTIFACTS[0].id; 
   let activeModel = null; 
-  let isTourMode = false; // 💡 متغير لتتبع وضع التجول
+  let isTourMode = false;
 
   const itemsRow = document.getElementById('museum-items');
   const instructionBadge = document.getElementById('ar-instruction');
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const cameraEl = document.querySelector('a-camera');
   const topBar = document.querySelector('.top-bar');
   
-  // عناصر الشريط والتجول
+  // عناصر التجول والشريط
   const heightCtrl = document.getElementById('height-ctrl');
   const heightRange = document.getElementById('height-range');
   const btnStartTour = document.getElementById('btn-start-tour');
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
       btnPlaceModel.style.display = 'block'; 
       
       if (heightCtrl) heightCtrl.style.display = 'flex'; 
-      if (btnStartTour) btnStartTour.style.display = 'block'; // إظهار زر بدء التجول
+      if (btnStartTour) btnStartTour.style.display = 'block'; 
       
       instructionBadge.style.display = 'block';
       instructionBadge.innerText = "وجّه الكاميرا للأسفل واضغط زر الإسقاط";
@@ -64,39 +64,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 💡 برمجة زر بدء التجول
+  // زر بدء التجول
   if (btnStartTour) {
     btnStartTour.addEventListener('click', (e) => {
       e.stopPropagation();
-      isTourMode = true; // تفعيل وضع التجول (لتجميد المجسمات)
+      isTourMode = true; 
       
-      // إخفاء جميع عناصر واجهة المستخدم
       bottomPanel.style.display = 'none';
       if (heightCtrl) heightCtrl.style.display = 'none';
       btnPlaceModel.style.display = 'none';
       topBar.style.display = 'none';
       btnStartTour.style.display = 'none';
       
-      // إظهار زر إنهاء التجول الصغير
       btnEndTour.style.display = 'block';
     });
   }
 
-  // 💡 برمجة زر إنهاء التجول
+  // زر إنهاء التجول
   if (btnEndTour) {
     btnEndTour.addEventListener('click', (e) => {
       e.stopPropagation();
       btnEndTour.style.display = 'none';
-      thankYouScreen.style.display = 'flex'; // إظهار شاشة الشكر
+      thankYouScreen.style.display = 'flex'; // الآن ستظهر بوضوح أمام الكاميرا
 
-      // الانتظار 3.5 ثوانٍ ثم العودة للرئيسية بسلاسة
       setTimeout(() => {
         window.location.href = 'index.html';
       }, 3500);
     });
   }
 
-  // برمجة الشريط 
+  // برمجة الشريط
   if (heightRange) {
     heightRange.addEventListener('input', (e) => {
       if (activeModel) {
@@ -135,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
       targetModel.setAttribute('animation', {
         property: 'scale', to: selectedScale, dur: 600, easing: 'easeOutElastic'
       });
-      instructionBadge.innerText = "اسحب للتحريك، وضع المزيد من القطع، أو ابدأ التجول!";
+      instructionBadge.innerText = "اسحب للتحريك، وضع المزيد، أو ابدأ التجول!";
       instructionBadge.style.background = "rgba(212, 175, 55, 0.9)";
       instructionBadge.style.color = "black";
     });
@@ -152,7 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let initialPosObj = {x:0, y:0, z:0};
 
   window.addEventListener('touchstart', (e) => {
-    // 💡 الحماية القصوى: إذا كنا في "وضع التجول"، تجاهل كل اللمسات تماماً ليتم قفل المجسمات!
     if (isTourMode || !activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('#height-ctrl') || e.target.closest('a')) return;
     
     if (e.touches.length === 1) {
@@ -169,7 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }, { passive: false });
 
   window.addEventListener('touchmove', (e) => {
-    // 💡 منع التحريك في وضع التجول
     if (isTourMode || !activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('#height-ctrl') || e.target.closest('a')) return;
     e.preventDefault(); 
 
