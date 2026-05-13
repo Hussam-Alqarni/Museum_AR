@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedScale = ARTIFACTS[0].scale;
   let selectedId = ARTIFACTS[0].id; 
   let activeModel = null; 
-  let currentHeight = 0; // متغير لحفظ الارتفاع الحالي
 
   const itemsRow = document.getElementById('museum-items');
   const instructionBadge = document.getElementById('ar-instruction');
@@ -21,10 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const scene = document.querySelector('a-scene');
   const cameraEl = document.querySelector('a-camera');
   
-  // أزرار الارتفاع الجديدة
+  // شريط الارتفاع
   const heightCtrl = document.getElementById('height-ctrl');
-  const btnUp = document.getElementById('btn-up');
-  const btnDown = document.getElementById('btn-down');
+  const heightRange = document.getElementById('height-range');
 
   ARTIFACTS.forEach((art, index) => {
     const btn = document.createElement('div');
@@ -38,6 +36,11 @@ document.addEventListener("DOMContentLoaded", () => {
       selectedSrc = art.src;
       selectedScale = art.scale;
       selectedId = art.id; 
+      
+      // 💡 الميزة المطلوبة: تصفير الشريط فوراً عند اختيار مجسم جديد
+      if (heightRange) {
+        heightRange.value = 0;
+      }
       
       if(scene.is('ar-mode')) {
         instructionBadge.innerText = `تم اختيار ${art.name} - اضغط إسقاط`;
@@ -61,24 +64,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // --- برمجة أزرار الارتفاع ---
-  if (btnUp && btnDown) {
-    btnUp.addEventListener('click', (e) => {
-      e.stopPropagation();
+  // --- برمجة الشريط (قراءة القيمة لحظياً) ---
+  if (heightRange) {
+    heightRange.addEventListener('input', (e) => {
       if (activeModel) {
-        currentHeight += 0.1; // رفع 10 سم
-        activeModel.object3D.position.y = currentHeight;
-        instructionBadge.innerText = `الارتفاع: ${currentHeight.toFixed(2)} م`;
-      }
-    });
-
-    btnDown.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (activeModel) {
-        currentHeight -= 0.1; // خفض 10 سم
-        if (currentHeight < 0) currentHeight = 0; // منع النزول تحت الأرض
-        activeModel.object3D.position.y = currentHeight;
-        instructionBadge.innerText = `الارتفاع: ${currentHeight.toFixed(2)} م`;
+        const newY = parseFloat(e.target.value);
+        activeModel.object3D.position.y = newY;
+        instructionBadge.innerText = `الارتفاع: ${newY.toFixed(2)} م`;
       }
     });
   }
@@ -89,8 +81,10 @@ document.addEventListener("DOMContentLoaded", () => {
     arLoading.style.display = 'block';
     btnPlaceModel.style.display = 'none';
 
-    // تصفير الارتفاع عند إسقاط مجسم جديد
-    currentHeight = 0; 
+    // 💡 تصفير الشريط أيضاً عند الإسقاط لضمان الهبوط على الأرض
+    if (heightRange) {
+      heightRange.value = 0;
+    }
 
     const camera3D = cameraEl.object3D;
     const direction = new AFRAME.THREE.Vector3(0, 0, -1);
@@ -100,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const spawnPos = new AFRAME.THREE.Vector3();
     spawnPos.copy(camera3D.position).add(direction.multiplyScalar(1.2)); 
-    spawnPos.y = currentHeight; 
+    spawnPos.y = 0; // البداية دائماً من الصفر
 
     const targetModel = document.createElement('a-entity');
     targetModel.setAttribute('gltf-model', selectedSrc);
@@ -113,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
       targetModel.setAttribute('animation', {
         property: 'scale', to: selectedScale, dur: 600, easing: 'easeOutElastic'
       });
-      instructionBadge.innerText = "استخدم الأسهم ⬆️⬇️ للتحكم بالارتفاع";
+      instructionBadge.innerText = "اسحب المجسم للتحريك، واستخدم الشريط للارتفاع.";
       instructionBadge.style.background = "rgba(212, 175, 55, 0.9)";
       instructionBadge.style.color = "black";
     });
@@ -122,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
     activeModel = targetModel; 
   });
 
-  // --- نظام الحركة ---
+  // --- نظام الحركة (مع عزل اللمس عن الشريط) ---
   let startX = 0, startY = 0;
   let initialRot = 0;
   let initialPinchDist = 0, initialAngle = 0;
@@ -130,7 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let initialPosObj = {x:0, y:0, z:0};
 
   window.addEventListener('touchstart', (e) => {
-    if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('a')) return;
+    // 💡 الحماية: إذا كانت اللمسة على أزرار UI أو كبسولة الشريط (height-ctrl)، تجاهل حركة الكاميرا تماماً!
+    if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('#height-ctrl') || e.target.closest('a')) return;
     
     if (e.touches.length === 1) {
       startX = e.touches[0].pageX;
@@ -146,7 +141,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }, { passive: false });
 
   window.addEventListener('touchmove', (e) => {
-    if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('a')) return;
+    // 💡 الحماية أثناء السحب
+    if (!activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('#height-ctrl') || e.target.closest('a')) return;
     e.preventDefault(); 
 
     if (e.touches.length === 1) {
