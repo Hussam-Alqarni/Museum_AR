@@ -72,13 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
     uiScan.style.display = 'block';
     discoveryCounter.style.display = 'block';
     
-    // 💡 تم إصلاح الماركرات (preset) وتمت إضافة الشريحة الذكية (marker-handler) بداخلها
+   // وضع الماركرات بالصيغة الموحدة (اسم المجسم + marker)
     arWrapper.innerHTML = `
       <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
-        <a-marker id="marker-tent" preset="hiro" emitevents="true" marker-handler></a-marker>
-        <a-marker id="marker-dallah" preset="kanji" emitevents="true" marker-handler></a-marker>
-        <a-marker id="marker-sword" type="pattern" url="markers/pattern-letterA.patt" emitevents="true" marker-handler></a-marker>
-        <a-marker id="marker-mubkhara" type="pattern" url="markers/pattern-mubkhara.patt" emitevents="true" marker-handler></a-marker>
+        <a-marker id="marker-tent" type="pattern" url="markers/tent-marker.patt" emitevents="true" marker-handler></a-marker>
+        <a-marker id="marker-dallah" type="pattern" url="markers/dallah-marker.patt" emitevents="true" marker-handler></a-marker>
+        <a-marker id="marker-sword" type="pattern" url="markers/sword-marker.patt" emitevents="true" marker-handler></a-marker>
+        <a-marker id="marker-mubkhara" type="pattern" url="markers/mubkhara-marker.patt" emitevents="true" marker-handler></a-marker>
         <a-entity camera></a-entity>
       </a-scene>
     `;
