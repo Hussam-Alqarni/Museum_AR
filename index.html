@@ -72,13 +72,22 @@
       border-top-color: #d1b15a; border-radius: 50%; animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* تنسيق رقم النسخة الخفيف */
+    .version-badge {
+      text-align: center;
+      font-family: monospace, sans-serif;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.15); /* لون شفاف جداً */
+      margin-top: 5px;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
 
   <div id="tour-container">
     
-    <!-- العداد العائم -->
     <div id="discovery-counter" class="counter-badge">القطع المستكشفة: ٠ / ٤</div>
 
     <section id="welcome-screen" class="welcome-section">
@@ -109,10 +118,11 @@
         </div>
 
         <button type="button" id="btn-start" class="btn-primary">افتح الكاميرا وابدأ الجولة</button>
+        
+        <div class="version-badge">v1.0</div>
       </div>
     </section>
 
-    <!-- واجهة البحث عن الماركر -->
     <div id="scan-ui" style="display: none;">
       <button id="btn-back-home" class="top-back-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -123,11 +133,9 @@
         ابحث عن أي ماركر لعرض القطعة...
       </div>
       
-      <!-- زر الانتقال السريع -->
       <a href="museum.html" class="skip-tour-btn">تخطي وبناء متحفك الخاص</a>
     </div>
 
-    <!-- الصفحة الفارغة لعرض المجسم 360 -->
     <div id="model-360-view">
       <button id="btn-back-scan" class="top-back-btn" style="top: 15px; right: 15px;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -153,7 +161,6 @@
       </div>
     </div>
 
-    <!-- شاشة النهاية -->
     <div id="done-screen">
       <h2 id="done-title-done">اكتملت المجموعة!</h2>
       <p class="done-copy">لقد استكشفت جميع القطع الأثرية الأربع بنجاح. الآن أنت جاهز لتصميم مساحتك التراثية.</p>
