@@ -31,17 +31,23 @@ updateCounterUI();
 function startTour() {
   welcomeScreen.style.display = 'none';
   scanUi.style.display = 'flex';
+  
+  // إخفاء زر اللغة عند بدء الجولة
+  const langBtn = document.querySelector('.welcome-lang-btn');
+  if (langBtn) langBtn.style.display = 'none';
+  
   counterBadge.style.display = 'block';
   initAR();
 }
 
 function initAR() {
+  // 💡 تم تعديل أسماء ملفات patt هنا بناءً على طلبك
   arjsWrapper.innerHTML = `
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false">
-      <a-marker type="pattern" url="markers/tent-marker.patt" id="tent-marker"></a-marker>
-      <a-marker type="pattern" url="markers/dallah-marker.patt" id="dallah-marker"></a-marker>
-      <a-marker type="pattern" url="markers/sword-marker.patt" id="sword-marker"></a-marker>
-      <a-marker type="pattern" url="markers/mubkhara-marker.patt" id="mubkhara-marker"></a-marker>
+      <a-marker type="pattern" url="markers/5tent-marker.patt" id="tent-marker"></a-marker>
+      <a-marker type="pattern" url="markers/5dallah-marker.patt" id="dallah-marker"></a-marker>
+      <a-marker type="pattern" url="markers/5sword-marker.patt" id="sword-marker"></a-marker>
+      <a-marker type="pattern" url="markers/5mubkhara-marker.patt" id="mubkhara-marker"></a-marker>
       <a-entity camera></a-entity>
     </a-scene>
   `;
