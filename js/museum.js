@@ -1,8 +1,10 @@
+const t = window.translations[window.currentLang];
+
 const ARTIFACTS = [
-  { id: "tent", name: "الخيمة", src: "models/arabic_tent.glb", scale: "18 18 18" }, 
-  { id: "dallah", name: "الدلة", src: "models/saudi_dallah.glb", scale: "0.5 0.5 0.5" }, 
-  { id: "sword", name: "السيف", src: "models/arabic_sword.glb", scale: "0.03 0.03 0.03" },
-  { id: "mubkhara", name: "المبخرة", src: "models/mubkhara.glb", scale: "0.005 0.005 0.005" }
+  { id: "tent", name: t.tent, src: "models/arabic_tent.glb", scale: "18 18 18" }, 
+  { id: "dallah", name: t.dallah, src: "models/saudi_dallah.glb", scale: "0.5 0.5 0.5" }, 
+  { id: "sword", name: t.sword, src: "models/arabic_sword.glb", scale: "0.03 0.03 0.03" },
+  { id: "mubkhara", name: t.mubkhara, src: "models/mubkhara.glb", scale: "0.005 0.005 0.005" }
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -22,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const cameraEl = document.querySelector('a-camera');
   const topBar = document.querySelector('.top-bar');
   
-  // عناصر التجول والشريط
   const heightCtrl = document.getElementById('height-ctrl');
   const heightRange = document.getElementById('height-range');
   const btnStartTour = document.getElementById('btn-start-tour');
@@ -43,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
       selectedId = art.id; 
       
       if (heightRange) heightRange.value = 0;
-      if (scene.is('ar-mode')) instructionBadge.innerText = `تم اختيار ${art.name} - اضغط إسقاط`;
+      if (scene.is('ar-mode')) instructionBadge.innerText = `${t.selected} ${art.name} ${t.drop}`;
     };
     itemsRow.appendChild(btn);
   });
@@ -58,48 +59,40 @@ document.addEventListener("DOMContentLoaded", () => {
       if (btnStartTour) btnStartTour.style.display = 'block'; 
       
       instructionBadge.style.display = 'block';
-      instructionBadge.innerText = "وجّه الكاميرا للأسفل واضغط زر الإسقاط";
+      instructionBadge.innerText = t.cam_down;
       instructionBadge.style.background = "rgba(0, 0, 0, 0.7)";
       instructionBadge.style.color = "var(--sand)";
     }
   });
 
-  // زر بدء التجول
   if (btnStartTour) {
     btnStartTour.addEventListener('click', (e) => {
       e.stopPropagation();
       isTourMode = true; 
-      
       bottomPanel.style.display = 'none';
       if (heightCtrl) heightCtrl.style.display = 'none';
       btnPlaceModel.style.display = 'none';
       topBar.style.display = 'none';
       btnStartTour.style.display = 'none';
-      
       btnEndTour.style.display = 'block';
     });
   }
 
-  // زر إنهاء التجول
   if (btnEndTour) {
     btnEndTour.addEventListener('click', (e) => {
       e.stopPropagation();
       btnEndTour.style.display = 'none';
-      thankYouScreen.style.display = 'flex'; // الآن ستظهر بوضوح أمام الكاميرا
-
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 3500);
+      thankYouScreen.style.display = 'flex'; 
+      setTimeout(() => { window.location.href = 'index.html'; }, 3500);
     });
   }
 
-  // برمجة الشريط
   if (heightRange) {
     heightRange.addEventListener('input', (e) => {
       if (activeModel) {
         const newY = parseFloat(e.target.value);
         activeModel.object3D.position.y = newY;
-        instructionBadge.innerText = `الارتفاع: ${newY.toFixed(2)} م`;
+        instructionBadge.innerText = `${t.height} ${newY.toFixed(2)} m`;
       }
     });
   }
@@ -108,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
     e.stopPropagation();
     arLoading.style.display = 'block';
     btnPlaceModel.style.display = 'none';
-
     if (heightRange) heightRange.value = 0;
 
     const camera3D = cameraEl.object3D;
@@ -129,19 +121,15 @@ document.addEventListener("DOMContentLoaded", () => {
     targetModel.addEventListener('model-loaded', () => {
       arLoading.style.display = 'none';
       btnPlaceModel.style.display = 'block';
-      targetModel.setAttribute('animation', {
-        property: 'scale', to: selectedScale, dur: 600, easing: 'easeOutElastic'
-      });
-      instructionBadge.innerText = "اسحب للتحريك، وضع المزيد، أو ابدأ التجول!";
+      targetModel.setAttribute('animation', { property: 'scale', to: selectedScale, dur: 600, easing: 'easeOutElastic' });
+      instructionBadge.innerText = t.instructions;
       instructionBadge.style.background = "rgba(212, 175, 55, 0.9)";
       instructionBadge.style.color = "black";
     });
-
     scene.appendChild(targetModel);
     activeModel = targetModel; 
   });
 
-  // --- نظام الحركة ---
   let startX = 0, startY = 0;
   let initialRot = 0;
   let initialPinchDist = 0, initialAngle = 0;
@@ -150,10 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener('touchstart', (e) => {
     if (isTourMode || !activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('#height-ctrl') || e.target.closest('a')) return;
-    
     if (e.touches.length === 1) {
-      startX = e.touches[0].pageX;
-      startY = e.touches[0].pageY;
+      startX = e.touches[0].pageX; startY = e.touches[0].pageY;
       initialPosObj = activeModel.object3D.position.clone();
     } else if (e.touches.length === 2) {
       const t1 = e.touches[0], t2 = e.touches[1];
@@ -167,28 +153,20 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener('touchmove', (e) => {
     if (isTourMode || !activeModel || e.target.closest('button') || e.target.closest('.ar-item-btn') || e.target.closest('#height-ctrl') || e.target.closest('a')) return;
     e.preventDefault(); 
-
     if (e.touches.length === 1) {
       const deltaX = (e.touches[0].pageX - startX) * 0.004;
       const deltaY = (e.touches[0].pageY - startY) * 0.004;
-
       const camHeading = cameraEl.object3D.rotation.y;
       const moveX = Math.cos(camHeading) * deltaX + Math.sin(camHeading) * deltaY;
       const moveZ = -Math.sin(camHeading) * deltaX + Math.cos(camHeading) * deltaY;
-
       activeModel.object3D.position.x = initialPosObj.x + moveX;
       activeModel.object3D.position.z = initialPosObj.z + moveZ;
-      
     } else if (e.touches.length === 2) {
       const t1 = e.touches[0], t2 = e.touches[1];
       const dist = Math.hypot(t1.pageX - t2.pageX, t1.pageY - t2.pageY);
       const angle = Math.atan2(t2.pageY - t1.pageY, t2.pageX - t1.pageX);
-
       const scaleFactor = dist / initialPinchDist;
-      activeModel.object3D.scale.set(
-        initialScaleObj.x * scaleFactor, initialScaleObj.y * scaleFactor, initialScaleObj.z * scaleFactor
-      );
-
+      activeModel.object3D.scale.set(initialScaleObj.x * scaleFactor, initialScaleObj.y * scaleFactor, initialScaleObj.z * scaleFactor);
       const angleDiff = angle - initialAngle;
       activeModel.object3D.rotation.y = initialRot - angleDiff;
     }

@@ -1,118 +1,110 @@
+const t = window.translations[window.currentLang];
+
 const ARTIFACTS_MAP = {
-  "marker-tent": { name: "الخيمة العربية", src: "models/arabic_tent.glb", info: "تُعرف بـ 'بيت الشعر'، وهي تمثل التراث البدوي الأصيل." },
-  "marker-dallah": { name: "الدلة السعودية", src: "models/saudi_dallah.glb", info: "الرمز الأبرز للضيافة والكرم في المملكة لتقديم القهوة العربية." },
-  "marker-sword": { name: "السيف العربي", src: "models/arabic_sword.glb", info: "يُعد السيف رمزاً للشجاعة، ويحضر بقوة في المناسبات و'العرضة السعودية'." },
-  "marker-mubkhara": { name: "المبخرة", src: "models/mubkhara.glb", info: "تعكس الكرم وحفاوة الاستقبال وطيب العود في الثقافة السعودية." }
+  "tent-marker": { id: "tent", name: t.tent, info: t.info_tent, src: "models/arabic_tent.glb" },
+  "dallah-marker": { id: "dallah", name: t.dallah, info: t.info_dallah, src: "models/saudi_dallah.glb" },
+  "sword-marker": { id: "sword", name: t.sword, info: t.info_sword, src: "models/arabic_sword.glb" },
+  "mubkhara-marker": { id: "mubkhara", name: t.mubkhara, info: t.info_mubkhara, src: "models/mubkhara.glb" }
 };
 
-let foundItems = new Set(); 
-let isTransitioning = false;
+let discoveredCount = 0;
+const discoveredIds = new Set();
 
-// 💡 المكون البرمجي الرسمي والآمن لالتقاط الماركرات من جذورها (بدون الاعتماد على المتصفح)
-AFRAME.registerComponent('marker-handler', {
-  init: function () {
-    this.el.addEventListener('markerFound', () => {
-      if (isTransitioning) return;
+const welcomeScreen = document.getElementById('welcome-screen');
+const scanUi = document.getElementById('scan-ui');
+const model360View = document.getElementById('model-360-view');
+const doneScreen = document.getElementById('done-screen');
+const counterBadge = document.getElementById('discovery-counter');
+const arjsWrapper = document.getElementById('arjs-scene-wrapper');
 
-      const markerId = this.el.id; // استخراج اسم الماركر الذي التقطته الكاميرا فوراً
-      const art = ARTIFACTS_MAP[markerId];
+document.getElementById('btn-start').addEventListener('click', startTour);
+document.getElementById('btn-back-scan').addEventListener('click', backToScan);
+document.getElementById('btn-next').addEventListener('click', backToScan);
+document.getElementById('btn-restart-tour').addEventListener('click', restartTour);
 
-      if (art) {
-        isTransitioning = true;
-        foundItems.add(markerId); 
-        
-        // تحديث العداد
-        const discoveryCounter = document.getElementById('discovery-counter');
-        const arabicNumbers = ['٠', '١', '٢', '٣', '٤'];
-        discoveryCounter.innerText = `القطع المستكشفة: ${arabicNumbers[foundItems.size]} / ٤`;
-        
-        // إخفاء الكاميرا وعرض المجسم 360
-        document.getElementById('arjs-scene-wrapper').style.display = 'none'; 
-        document.getElementById('scan-ui').style.display = 'none';
-        document.getElementById('model-360-view').style.display = 'flex';
-        
-        const mvElement = document.getElementById('mv-element');
-        mvElement.style.visibility = 'hidden';
-        document.getElementById('mv-loading').style.display = 'flex'; 
-        document.getElementById('viewer-title').innerText = art.name;
-        document.getElementById('viewer-info').innerText = art.info;
-        mvElement.src = art.src;
+function updateCounterUI() {
+  counterBadge.innerText = `${t.discovered} ${discoveredCount} / 4`;
+  if (discoveredCount > 0) counterBadge.style.display = 'block';
+}
+updateCounterUI();
 
-        const btnNext = document.getElementById('btn-next');
-        if (foundItems.size >= 4) {
-          btnNext.innerText = "إنهاء الجولة";
-        } else {
-          btnNext.innerText = "متابعة البحث عن باقي القطع";
-        }
+function startTour() {
+  welcomeScreen.style.display = 'none';
+  scanUi.style.display = 'flex';
+  counterBadge.style.display = 'block';
+  initAR();
+}
+
+function initAR() {
+  arjsWrapper.innerHTML = `
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false">
+      <a-marker type="pattern" url="markers/tent-marker.patt" id="tent-marker"></a-marker>
+      <a-marker type="pattern" url="markers/dallah-marker.patt" id="dallah-marker"></a-marker>
+      <a-marker type="pattern" url="markers/sword-marker.patt" id="sword-marker"></a-marker>
+      <a-marker type="pattern" url="markers/mubkhara-marker.patt" id="mubkhara-marker"></a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+  `;
+  
+  setTimeout(() => {
+    Object.keys(ARTIFACTS_MAP).forEach(markerId => {
+      const markerEl = document.getElementById(markerId);
+      if (markerEl) {
+        markerEl.addEventListener('markerFound', () => onMarkerFound(markerId));
       }
     });
-  }
-});
+  }, 1000);
+}
 
-document.addEventListener("DOMContentLoaded", () => {
-  const uiWelcome = document.getElementById('welcome-screen');
-  const uiScan = document.getElementById('scan-ui');
-  const ui360 = document.getElementById('model-360-view');
-  const uiDone = document.getElementById('done-screen');
+function onMarkerFound(markerId) {
+  const artifact = ARTIFACTS_MAP[markerId];
+  if (!discoveredIds.has(artifact.id)) {
+    discoveredIds.add(artifact.id);
+    discoveredCount++;
+    updateCounterUI();
+  }
+  show360View(artifact);
+}
+
+function show360View(artifact) {
+  scanUi.style.display = 'none';
+  arjsWrapper.style.display = 'none';
+  model360View.style.display = 'flex';
+  
+  document.getElementById('viewer-title').innerText = artifact.name;
+  document.getElementById('viewer-info').innerText = artifact.info;
+  
   const mvElement = document.getElementById('mv-element');
   const mvLoading = document.getElementById('mv-loading');
-  const arWrapper = document.getElementById('arjs-scene-wrapper');
-  const btnNext = document.getElementById('btn-next');
-  const discoveryCounter = document.getElementById('discovery-counter');
-
-  // إخفاء التحميل عند ظهور المجسم 360
+  
+  mvElement.style.visibility = 'hidden';
+  mvLoading.style.display = 'flex';
+  mvElement.src = artifact.src;
+  
   mvElement.addEventListener('load', () => {
     mvLoading.style.display = 'none';
     mvElement.style.visibility = 'visible';
-  });
+  }, { once: true });
+}
 
-  // زر البدء 
-  document.getElementById('btn-start').addEventListener('click', () => {
-    uiWelcome.style.display = 'none';
-    uiScan.style.display = 'block';
-    discoveryCounter.style.display = 'block';
-    
-   // وضع الماركرات بالصيغة الموحدة (اسم المجسم + marker)
-    arWrapper.innerHTML = `
-      <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
-        <a-marker id="marker-tent" type="pattern" url="markers/tent-marker.patt" emitevents="true" marker-handler></a-marker>
-        <a-marker id="marker-dallah" type="pattern" url="markers/dallah-marker.patt" emitevents="true" marker-handler></a-marker>
-        <a-marker id="marker-sword" type="pattern" url="markers/sword-marker.patt" emitevents="true" marker-handler></a-marker>
-        <a-marker id="marker-mubkhara" type="pattern" url="markers/mubkhara-marker.patt" emitevents="true" marker-handler></a-marker>
-        <a-entity camera></a-entity>
-      </a-scene>
-    `;
-  });
+function backToScan() {
+  if (discoveredCount >= 4) {
+    model360View.style.display = 'none';
+    doneScreen.style.display = 'flex';
+    counterBadge.style.display = 'none';
+  } else {
+    model360View.style.display = 'none';
+    scanUi.style.display = 'flex';
+    arjsWrapper.style.display = 'block';
+  }
+}
 
-  // أزرار التحكم والرجوع 
-  document.getElementById('btn-back-home').addEventListener('click', () => {
-    window.location.reload(); 
-  });
-
-  document.getElementById('btn-back-scan').addEventListener('click', () => {
-    ui360.style.display = 'none';
-    mvElement.src = "";
-    isTransitioning = false; 
-    arWrapper.style.display = 'block';
-    uiScan.style.display = 'block';
-  });
-
-  document.getElementById('btn-restart-tour').addEventListener('click', () => {
-    location.reload();
-  });
-
-  btnNext.addEventListener('click', () => {
-    ui360.style.display = 'none';
-    mvElement.src = "";
-    mvElement.style.visibility = 'hidden';
-    isTransitioning = false; 
-    
-    if (foundItems.size >= 4) {
-      uiDone.style.display = 'flex';
-      discoveryCounter.style.display = 'none';
-    } else {
-      arWrapper.style.display = 'block'; 
-      uiScan.style.display = 'block';
-    }
-  });
-});
+function restartTour() {
+  discoveredCount = 0;
+  discoveredIds.clear();
+  updateCounterUI();
+  doneScreen.style.display = 'none';
+  scanUi.style.display = 'flex';
+  arjsWrapper.style.display = 'block';
+  counterBadge.style.display = 'block';
+}

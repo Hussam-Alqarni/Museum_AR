@@ -252,3 +252,11 @@ body {
   margin: 0;
   font-size: 1.1rem;
 }
+/* =========================================
+   تعديلات الترجمة (LTR Overrides للإنجليزية)
+   ========================================= */
+[dir="ltr"] .height-slider-container { right: auto; left: 15px; }
+[dir="ltr"] #btn-start-tour, [dir="ltr"] #btn-end-tour { left: auto; right: 20px; }
+[dir="ltr"] .btn-back svg { transform: rotate(180deg); /* عكس السهم للإنجليزية */ }
+[dir="ltr"] .top-back-btn, [dir="ltr"] .counter-badge { left: auto; right: 20px; }
+[dir="ltr"] .lang-switch-btn { right: auto !important; left: 20px !important; }
