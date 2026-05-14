@@ -7,9 +7,9 @@ window.translations = {
     "tour_h1": "قطع تراث أمام عدستك",
     "tour_lead": "أربع وقفات: <strong>خيمة</strong>، <strong>دلة</strong>، <strong>سيف</strong>، وأخيراً <strong>مبخرة</strong>.",
     "tour_steps_title": "قبل ما تفتح الكاميرا",
-    "step_1": "جهّز الرموز الأربعة بأي ترتيب، مطبوعة أو معروضة.",
-    "step_2": "عند ظهور المجسم، ستنتقل لشاشة حرة لتكبيره وتدويره.",
-    "step_3": "يمكنك في أي وقت تخطي الجولة لبناء متحفك الخاص!",
+    "step_1": "جهّز الرموز الأربعة بأي ترتيب.",
+    "step_2": "عند ظهور المجسم، ستنتقل لشاشة حرة لتكبيره.",
+    "step_3": "يمكنك تخطي الجولة لبناء متحفك الخاص!",
     "btn_start_cam": "افتح الكاميرا وابدأ الجولة",
     "scan_hint": "ابحث عن أي ماركر لعرض القطعة...",
     "skip_tour": "تخطي وبناء متحفك الخاص",
@@ -17,7 +17,7 @@ window.translations = {
     "loading_model": "جاري تجهيز المجسم...",
     "continue_search": "متابعة البحث",
     "done_title": "اكتملت المجموعة!",
-    "done_desc": "لقد استكشفت جميع القطع الأثرية الأربع بنجاح. الآن أنت جاهز لتصميم مساحتك التراثية.",
+    "done_desc": "لقد استكشفت جميع القطع الأثرية بنجاح.",
     "enter_museum": "دخول المتحف الخاص",
     "restart_tour": "إعادة الجولة",
     "discovered": "القطع المستكشفة:",
@@ -38,7 +38,7 @@ window.translations = {
     "ar_loading": "جاري تجهيز القطعة...",
     "drop_model": "➕ إسقاط المجسم هنا",
     "thank_you_title": "شكراً لزيارتك",
-    "thank_you_desc": "لقد قمت بتصميم مساحة تراثية افتراضية رائعة.<br>نتمنى أن تكون قد استمتعت بالتجربة.",
+    "thank_you_desc": "لقد قمت بتصميم مساحة تراثية رائعة.",
     "selected": "تم اختيار",
     "drop": "- اضغط إسقاط",
     "cam_down": "وجّه الكاميرا للأسفل واضغط زر الإسقاط",
@@ -62,7 +62,7 @@ window.translations = {
     "loading_model": "Loading model...",
     "continue_search": "Continue Searching",
     "done_title": "Collection Complete!",
-    "done_desc": "You have successfully explored all 4 artifacts. Now you are ready to design your heritage space.",
+    "done_desc": "You have successfully explored all artifacts.",
     "enter_museum": "Enter Private Museum",
     "restart_tour": "Restart Tour",
     "discovered": "Discovered:",
@@ -83,7 +83,7 @@ window.translations = {
     "ar_loading": "Loading model...",
     "drop_model": "➕ Drop Model Here",
     "thank_you_title": "Thank You",
-    "thank_you_desc": "You have designed a wonderful virtual heritage space.<br>We hope you enjoyed the experience.",
+    "thank_you_desc": "You have designed a wonderful virtual heritage space.",
     "selected": "Selected",
     "drop": "- Press Drop",
     "cam_down": "Point camera down and press Drop",
@@ -92,12 +92,16 @@ window.translations = {
   }
 };
 
+// جلب اللغة المحفوظة
 window.currentLang = localStorage.getItem('appLang') || 'ar';
 
-function applyLanguage() {
-  document.documentElement.lang = window.currentLang;
-  document.documentElement.dir = window.currentLang === 'ar' ? 'rtl' : 'ltr';
-  
+// 1. تغيير الاتجاه فوراً (حتى لا يحدث وميض)
+document.documentElement.lang = window.currentLang;
+document.documentElement.dir = window.currentLang === 'ar' ? 'rtl' : 'ltr';
+
+// 2. دالة الترجمة التي ستعمل بعد تحميل الصفحة
+function applyTranslations() {
+  // ترجمة جميع العناصر التي تحتوي على data-i18n
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (window.translations[window.currentLang][key]) {
@@ -105,14 +109,17 @@ function applyLanguage() {
     }
   });
   
+  // تحديث نصوص أزرار التبديل
   document.querySelectorAll('.lang-switch-btn').forEach(btn => {
     btn.innerText = window.currentLang === 'ar' ? 'English' : 'العربية';
   });
 }
 
-applyLanguage(); // تفعيل الترجمة فوراً
-
+// 3. انتظار تحميل كامل الصفحة (DOM) ثم بدء الترجمة
 document.addEventListener("DOMContentLoaded", () => {
+  applyTranslations(); // الآن سيجد النصوص ويترجمها بنجاح!
+
+  // تفعيل أزرار تغيير اللغة
   document.querySelectorAll('.lang-switch-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
