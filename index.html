@@ -23,8 +23,6 @@
   <style>
     #scan-ui { position: absolute; inset: 0; z-index: 9999; pointer-events: none; }
     .top-back-btn, .skip-tour-btn, .counter-badge, .lang-switch-btn { pointer-events: auto !important; z-index: 10000; }
-    .top-back-btn { position: absolute; top: 20px; right: 20px; background: rgba(18, 14, 11, 0.88); border: 1px solid rgba(245, 230, 200, 0.15); color: #ece6dc; padding: 8px 16px; border-radius: 999px; text-decoration: none; font-family: 'Tajawal', sans-serif; font-weight: bold; font-size: 0.9rem; backdrop-filter: blur(8px); cursor: pointer; display: flex; align-items: center; gap: 8px; }
-    .counter-badge { position: absolute; top: 20px; left: 20px; background: linear-gradient(135deg, #d1b15a, #8a7342); color: #000; padding: 8px 16px; border-radius: 999px; display: none; font-family: 'Tajawal', sans-serif; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(209, 177, 90, 0.3); }
     .skip-tour-btn { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: #d1b15a; border: 1px solid #d1b15a; padding: 10px 24px; border-radius: 999px; text-decoration: none; font-family: 'Tajawal', sans-serif; font-weight: bold; font-size: 0.95rem; backdrop-filter: blur(5px); white-space: nowrap; }
     .btn-secondary { background: transparent; color: #d1b15a; border: 2px solid #d1b15a; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; text-decoration: none; text-align: center; display: inline-block; width: 100%; margin-top: 10px; font-family: 'Tajawal', sans-serif; }
     .loading-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg-deep); z-index: 10; }
@@ -37,7 +35,7 @@
 
   <div id="tour-container">
     
-    <button class="lang-switch-btn top-back-btn" style="top: 20px; left: 20px; right: auto; border:none; color: var(--accent);">English</button>
+    <button class="lang-switch-btn top-back-btn lang-switch-absolute" style="border:none; color: var(--accent);">English</button>
 
     <div id="discovery-counter" class="counter-badge"></div>
 
@@ -67,11 +65,12 @@
         </div>
 
         <button type="button" id="btn-start" class="btn-primary" data-i18n="btn_start_cam">افتح الكاميرا وابدأ الجولة</button>
-        <div class="version-badge">v1.3</div>
+        <div class="version-badge">v1.4</div>
       </div>
     </section>
 
     <div id="scan-ui" style="display: none;">
+      
       <div id="hint-scan" data-i18n="scan_hint" style="position:absolute; top:80px; width:100%; text-align:center; color:white; font-family:'Tajawal'; font-weight:bold; pointer-events:none;">
         ابحث عن أي ماركر لعرض القطعة...
       </div>

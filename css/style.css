@@ -79,7 +79,7 @@ body {
 .marker-caption { margin: 0; font-size: 0.85rem; line-height: 1.4; color: var(--text); }
 .marker-caption em { display: block; font-style: normal; font-size: 0.75rem; color: var(--accent-dim); margin-top: 0.15rem; }
 
-/* الأزرار */
+/* الأزرار الأساسية */
 .btn-primary {
   margin-top: 1rem; width: 100%; padding: 1rem 1.25rem; font-family: "Tajawal", sans-serif;
   font-size: 1.1rem; font-weight: 700; border: none; border-radius: 4px; cursor: pointer;
@@ -87,10 +87,6 @@ body {
 }
 .btn-primary:hover { background: #dfc065; }
 .btn-primary:active { transform: translateY(1px); }
-
-/* واجهة الكاميرا والجولة */
-#scan-ui { position: fixed; inset: 0; z-index: 10; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
-#hint-scan { position: absolute; bottom: 40px; color: var(--sand); text-shadow: 0 2px 6px black; font-size: 1.1rem; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 20px; }
 
 /* الصفحة 360 */
 #model-360-view {
@@ -113,14 +109,21 @@ body {
 .done-copy { max-width: 400px; line-height: 1.8; color: var(--muted); margin: 0; font-size: 1rem; }
 
 /* =========================================
-   تنسيقات واجهة المتحف الخاص (مساحة حرة)
+   تنسيقات واجهة المتحف الخاص والتجول
    ========================================= */
 #ui-overlay { position: absolute; inset: 0; z-index: 999; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
 #ui-overlay * { pointer-events: auto; }
 
 .top-bar { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; margin-top: 10px; }
-.btn-back { background: var(--bg-panel); border: 1px solid var(--line-subtle); color: var(--text); padding: 10px 20px; border-radius: 999px; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(8px); transition: 0.2s; }
-.instruction-badge { background: rgba(0, 0, 0, 0.7); color: var(--sand); padding: 10px 20px; border-radius: 999px; font-size: 0.95rem; backdrop-filter: blur(10px); border: 1px solid var(--line-subtle); align-self: center; }
+.top-controls { display: flex; gap: 10px; flex-wrap: wrap; width: 100%; } /* flex-wrap لمنع التداخل */
+
+.btn-back { 
+  background: var(--bg-panel); border: 1px solid var(--line-subtle); color: var(--text); 
+  padding: 8px 16px; border-radius: 999px; text-decoration: none; font-weight: bold; 
+  display: flex; align-items: center; gap: 8px; backdrop-filter: blur(8px); 
+  transition: 0.2s; font-family: 'Tajawal', sans-serif; white-space: nowrap; flex-shrink: 0;
+}
+.instruction-badge { background: rgba(0, 0, 0, 0.7); color: var(--sand); padding: 10px 20px; border-radius: 999px; font-size: 0.95rem; backdrop-filter: blur(10px); border: 1px solid var(--line-subtle); align-self: flex-start; }
 
 .bottom-bar { background: var(--bg-panel); backdrop-filter: blur(15px); padding: 15px; border-radius: 16px; border: 1px solid var(--line-subtle); margin-bottom: 20px; }
 .items-carousel { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px; scroll-behavior: smooth; }
@@ -131,132 +134,42 @@ body {
 
 /* === كبسولة شريط السحب الاحترافية === */
 .height-slider-container {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  z-index: 10000;
-  display: none; /* يظهر في وضع AR */
-  background: rgba(18, 14, 11, 0.65);
-  padding: 15px 10px;
-  border-radius: 40px;
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--line-subtle);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  position: absolute; right: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 10000; display: none; background: rgba(18, 14, 11, 0.65); padding: 15px 10px; border-radius: 40px; backdrop-filter: blur(12px); border: 1px solid var(--line-subtle); box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
-
-#height-range {
-  -webkit-appearance: slider-vertical;
-  appearance: slider-vertical;
-  width: 12px;
-  height: 180px;
-  outline: none;
-  background: transparent;
-  accent-color: var(--accent);
-  cursor: grab;
-}
-
-#height-range:active {
-  cursor: grabbing;
-}
-
-.slider-label {
-  color: var(--accent);
-  font-family: 'Tajawal', sans-serif;
-  font-size: 0.75rem;
-  font-weight: bold;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
-  letter-spacing: 2px;
-}
+#height-range { -webkit-appearance: slider-vertical; appearance: slider-vertical; width: 12px; height: 180px; outline: none; background: transparent; accent-color: var(--accent); cursor: grab; }
+#height-range:active { cursor: grabbing; }
+.slider-label { color: var(--accent); font-family: 'Tajawal', sans-serif; font-size: 0.75rem; font-weight: bold; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); letter-spacing: 2px; }
 
 /* === أزرار وشاشة وضع التجول الحر === */
 #btn-start-tour {
-  position: absolute;
-  top: 20px; /* تم النقل للأعلى لتجنب التداخل */
-  left: 20px;
-  padding: 8px 16px;
-  font-size: 1rem;
-  font-weight: bold;
-  font-family: 'Tajawal', sans-serif;
-  border-radius: 999px;
-  display: none;
-  z-index: 1000;
-  background: rgba(18, 14, 11, 0.88);
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  backdrop-filter: blur(8px);
-  cursor: pointer;
-  transition: 0.2s;
+  position: absolute; top: 20px; left: 20px; padding: 8px 16px; font-size: 1rem; font-weight: bold; font-family: 'Tajawal', sans-serif; border-radius: 999px; display: none; z-index: 1000; background: rgba(18, 14, 11, 0.88); border: 1px solid var(--accent); color: var(--accent); backdrop-filter: blur(8px); cursor: pointer; transition: 0.2s; white-space: nowrap;
 }
-
-#btn-start-tour:active {
-  transform: scale(0.95);
-  background: var(--accent);
-  color: #000;
-}
+#btn-start-tour:active { transform: scale(0.95); background: var(--accent); color: #000; }
 
 #btn-end-tour {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: rgba(18, 14, 11, 0.88);
-  border: 1px solid #d1b15a;
-  color: #d1b15a;
-  padding: 8px 16px;
-  border-radius: 999px;
-  font-family: 'Tajawal', sans-serif;
-  font-weight: bold;
-  cursor: pointer;
-  display: none;
-  z-index: 1000;
-  backdrop-filter: blur(8px);
-  transition: 0.2s;
+  position: absolute; top: 20px; left: 20px; background: rgba(18, 14, 11, 0.88); border: 1px solid #d1b15a; color: #d1b15a; padding: 8px 16px; border-radius: 999px; font-family: 'Tajawal', sans-serif; font-weight: bold; cursor: pointer; display: none; z-index: 1000; backdrop-filter: blur(8px); transition: 0.2s; white-space: nowrap;
 }
+#btn-end-tour:active { transform: scale(0.95); background: var(--accent); color: #000; }
 
-#btn-end-tour:active {
-  transform: scale(0.95);
-  background: var(--accent);
-  color: #000;
-}
+#thank-you-screen { position: absolute; inset: 0; z-index: 99999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: linear-gradient(180deg, rgba(14, 11, 9, 0.97) 0%, rgba(8, 7, 6, 0.98) 100%); padding: 24px; }
+#thank-you-screen h1 { font-family: "Reem Kufi", "Tajawal", sans-serif; font-size: 2.5rem; color: var(--sand); margin: 0 0 12px; }
+#thank-you-screen p { max-width: 400px; line-height: 1.8; color: var(--muted); margin: 0; font-size: 1.1rem; }
 
-#thank-you-screen {
-  position: absolute; /* absolute بدلاً من fixed لتعمل بكفاءة داخل الـ overlay */
-  inset: 0;
-  z-index: 99999;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: linear-gradient(180deg, rgba(14, 11, 9, 0.97) 0%, rgba(8, 7, 6, 0.98) 100%);
-  padding: 24px;
-}
+/* =========================================
+   تنسيقات الصفحة الأولى المحدّثة (منع التداخل)
+   ========================================= */
+.lang-switch-absolute { position: absolute; top: 20px; left: 20px; z-index: 10000; pointer-events: auto; }
+.top-back-btn { position: absolute; top: 20px; right: 20px; background: rgba(18, 14, 11, 0.88); border: 1px solid rgba(245, 230, 200, 0.15); color: #ece6dc; padding: 8px 16px; border-radius: 999px; text-decoration: none; font-family: 'Tajawal', sans-serif; font-weight: bold; font-size: 0.9rem; backdrop-filter: blur(8px); cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 
-#thank-you-screen h1 {
-  font-family: "Reem Kufi", "Tajawal", sans-serif;
-  font-size: 2.5rem;
-  color: var(--sand);
-  margin: 0 0 12px;
-}
+/* 💡 تم نقل العداد للأسفل لتجنب أي اصطدام مع أزرار اللغة أو العودة */
+.counter-badge { position: absolute; top: 75px; left: 20px; background: linear-gradient(135deg, #d1b15a, #8a7342); color: #000; padding: 8px 16px; border-radius: 999px; display: none; font-family: 'Tajawal', sans-serif; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(209, 177, 90, 0.3); white-space: nowrap; }
 
-#thank-you-screen p {
-  max-width: 400px;
-  line-height: 1.8;
-  color: var(--muted);
-  margin: 0;
-  font-size: 1.1rem;
-}
 /* =========================================
    تعديلات الترجمة (LTR Overrides للإنجليزية)
    ========================================= */
 [dir="ltr"] .height-slider-container { right: auto; left: 15px; }
 [dir="ltr"] #btn-start-tour, [dir="ltr"] #btn-end-tour { left: auto; right: 20px; }
-[dir="ltr"] .btn-back svg { transform: rotate(180deg); /* عكس السهم للإنجليزية */ }
-[dir="ltr"] .top-back-btn, [dir="ltr"] .counter-badge { left: auto; right: 20px; }
-[dir="ltr"] .lang-switch-btn { right: auto !important; left: 20px !important; }
+[dir="ltr"] .btn-back svg { transform: rotate(180deg); }
+[dir="ltr"] .top-back-btn { left: 20px; right: auto; }
+[dir="ltr"] .lang-switch-absolute { right: 20px; left: auto; }
+[dir="ltr"] .counter-badge { right: 20px; left: auto; }
