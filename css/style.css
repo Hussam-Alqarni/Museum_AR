@@ -115,13 +115,11 @@ body {
 #ui-overlay * { pointer-events: auto; }
 
 .top-bar { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; margin-top: 10px; }
-.top-controls { display: flex; gap: 10px; flex-wrap: wrap; width: 100%; } /* flex-wrap لمنع التداخل */
-
 .btn-back { 
   background: var(--bg-panel); border: 1px solid var(--line-subtle); color: var(--text); 
   padding: 8px 16px; border-radius: 999px; text-decoration: none; font-weight: bold; 
   display: flex; align-items: center; gap: 8px; backdrop-filter: blur(8px); 
-  transition: 0.2s; font-family: 'Tajawal', sans-serif; white-space: nowrap; flex-shrink: 0;
+  transition: 0.2s; font-family: 'Tajawal', sans-serif; white-space: nowrap;
 }
 .instruction-badge { background: rgba(0, 0, 0, 0.7); color: var(--sand); padding: 10px 20px; border-radius: 999px; font-size: 0.95rem; backdrop-filter: blur(10px); border: 1px solid var(--line-subtle); align-self: flex-start; }
 
@@ -158,11 +156,29 @@ body {
 /* =========================================
    تنسيقات الصفحة الأولى المحدّثة (منع التداخل)
    ========================================= */
-.lang-switch-absolute { position: absolute; top: 20px; left: 20px; z-index: 10000; pointer-events: auto; }
-.top-back-btn { position: absolute; top: 20px; right: 20px; background: rgba(18, 14, 11, 0.88); border: 1px solid rgba(245, 230, 200, 0.15); color: #ece6dc; padding: 8px 16px; border-radius: 999px; text-decoration: none; font-family: 'Tajawal', sans-serif; font-weight: bold; font-size: 0.9rem; backdrop-filter: blur(8px); cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.top-back-btn { position: absolute; top: 20px; right: 20px; background: rgba(18, 14, 11, 0.88); border: 1px solid rgba(245, 230, 200, 0.15); color: #ece6dc; padding: 8px 16px; border-radius: 999px; text-decoration: none; font-family: 'Tajawal', sans-serif; font-weight: bold; font-size: 0.9rem; backdrop-filter: blur(8px); cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; z-index: 10000; }
 
-/* 💡 تم نقل العداد للأسفل لتجنب أي اصطدام مع أزرار اللغة أو العودة */
-.counter-badge { position: absolute; top: 75px; left: 20px; background: linear-gradient(135deg, #d1b15a, #8a7342); color: #000; padding: 8px 16px; border-radius: 999px; display: none; font-family: 'Tajawal', sans-serif; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(209, 177, 90, 0.3); white-space: nowrap; }
+/* العداد الآن عاد لمكانه الطبيعي والآمن */
+.counter-badge { position: absolute; top: 20px; left: 20px; background: linear-gradient(135deg, #d1b15a, #8a7342); color: #000; padding: 8px 16px; border-radius: 999px; display: none; font-family: 'Tajawal', sans-serif; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(209, 177, 90, 0.3); white-space: nowrap; z-index: 10000; }
+
+/* 💡 زر تبديل اللغة الأنيق الخاص بشاشة الترحيب فقط */
+.welcome-lang-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px; /* في العربية سيكون على اليسار */
+  background: rgba(18, 14, 11, 0.88);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: 'Tajawal', sans-serif;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+  transition: 0.2s;
+}
 
 /* =========================================
    تعديلات الترجمة (LTR Overrides للإنجليزية)
@@ -171,5 +187,6 @@ body {
 [dir="ltr"] #btn-start-tour, [dir="ltr"] #btn-end-tour { left: auto; right: 20px; }
 [dir="ltr"] .btn-back svg { transform: rotate(180deg); }
 [dir="ltr"] .top-back-btn { left: 20px; right: auto; }
-[dir="ltr"] .lang-switch-absolute { right: 20px; left: auto; }
 [dir="ltr"] .counter-badge { right: 20px; left: auto; }
+/* عكس زر اللغة في الشاشة الأولى */
+[dir="ltr"] .welcome-lang-btn { left: auto; right: 20px; }

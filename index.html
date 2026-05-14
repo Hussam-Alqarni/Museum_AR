@@ -22,8 +22,7 @@
 
   <style>
     #scan-ui { position: absolute; inset: 0; z-index: 9999; pointer-events: none; }
-    .top-back-btn, .skip-tour-btn, .counter-badge, .lang-switch-btn { pointer-events: auto !important; z-index: 10000; }
-    .skip-tour-btn { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: #d1b15a; border: 1px solid #d1b15a; padding: 10px 24px; border-radius: 999px; text-decoration: none; font-family: 'Tajawal', sans-serif; font-weight: bold; font-size: 0.95rem; backdrop-filter: blur(5px); white-space: nowrap; }
+    .skip-tour-btn { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: #d1b15a; border: 1px solid #d1b15a; padding: 10px 24px; border-radius: 999px; text-decoration: none; font-family: 'Tajawal', sans-serif; font-weight: bold; font-size: 0.95rem; backdrop-filter: blur(5px); white-space: nowrap; pointer-events: auto; z-index: 10000; }
     .btn-secondary { background: transparent; color: #d1b15a; border: 2px solid #d1b15a; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; text-decoration: none; text-align: center; display: inline-block; width: 100%; margin-top: 10px; font-family: 'Tajawal', sans-serif; }
     .loading-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg-deep); z-index: 10; }
     .spinner { width: 50px; height: 50px; border: 4px solid rgba(209, 177, 90, 0.2); border-top-color: #d1b15a; border-radius: 50%; animation: spin 1s linear infinite; }
@@ -35,11 +34,11 @@
 
   <div id="tour-container">
     
-    <button class="lang-switch-btn top-back-btn lang-switch-absolute" style="border:none; color: var(--accent);">English</button>
-
     <div id="discovery-counter" class="counter-badge"></div>
 
     <section id="welcome-screen" class="welcome-section">
+      <button class="lang-switch-btn welcome-lang-btn">English</button>
+
       <div class="welcome-inner">
         <header>
           <p class="welcome-eyebrow" data-i18n="tour_eyebrow">جولة رقمية · ثقافة سعودية</p>
@@ -65,16 +64,14 @@
         </div>
 
         <button type="button" id="btn-start" class="btn-primary" data-i18n="btn_start_cam">افتح الكاميرا وابدأ الجولة</button>
-        <div class="version-badge">v1.4</div>
+        <div class="version-badge">v1.2</div>
       </div>
     </section>
 
     <div id="scan-ui" style="display: none;">
-      
       <div id="hint-scan" data-i18n="scan_hint" style="position:absolute; top:80px; width:100%; text-align:center; color:white; font-family:'Tajawal'; font-weight:bold; pointer-events:none;">
         ابحث عن أي ماركر لعرض القطعة...
       </div>
-      
       <a href="museum.html" class="skip-tour-btn" data-i18n="skip_tour">تخطي وبناء متحفك الخاص</a>
     </div>
 
