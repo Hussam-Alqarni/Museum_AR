@@ -92,16 +92,11 @@ window.translations = {
   }
 };
 
-// جلب اللغة المحفوظة
 window.currentLang = localStorage.getItem('appLang') || 'ar';
-
-// 1. تغيير الاتجاه فوراً (حتى لا يحدث وميض)
 document.documentElement.lang = window.currentLang;
 document.documentElement.dir = window.currentLang === 'ar' ? 'rtl' : 'ltr';
 
-// 2. دالة الترجمة التي ستعمل بعد تحميل الصفحة
 function applyTranslations() {
-  // ترجمة جميع العناصر التي تحتوي على data-i18n
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (window.translations[window.currentLang][key]) {
@@ -109,17 +104,14 @@ function applyTranslations() {
     }
   });
   
-  // تحديث نصوص أزرار التبديل
   document.querySelectorAll('.lang-switch-btn').forEach(btn => {
     btn.innerText = window.currentLang === 'ar' ? 'English' : 'العربية';
   });
 }
 
-// 3. انتظار تحميل كامل الصفحة (DOM) ثم بدء الترجمة
 document.addEventListener("DOMContentLoaded", () => {
-  applyTranslations(); // الآن سيجد النصوص ويترجمها بنجاح!
+  applyTranslations();
 
-  // تفعيل أزرار تغيير اللغة
   document.querySelectorAll('.lang-switch-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();

@@ -1,10 +1,11 @@
 const t = window.translations[window.currentLang];
 
+// ربط المعرفات بمؤشرات ملف الـ targets.mind من 0 إلى 3
 const ARTIFACTS_MAP = {
   "marker0": { id: "tent", name: t.tent, info: t.info_tent, src: "models/arabic_tent.glb" },
-  "dallah-marker": { id: "dallah", name: t.dallah, info: t.info_dallah, src: "models/saudi_dallah.glb" },
-  "sword-marker": { id: "sword", name: t.sword, info: t.info_sword, src: "models/arabic_sword.glb" },
-  "mubkhara-marker": { id: "mubkhara", name: t.mubkhara, info: t.info_mubkhara, src: "models/mubkhara.glb" }
+  "marker1": { id: "dallah", name: t.dallah, info: t.info_dallah, src: "models/saudi_dallah.glb" },
+  "marker2": { id: "sword", name: t.sword, info: t.info_sword, src: "models/arabic_sword.glb" },
+  "marker3": { id: "mubkhara", name: t.mubkhara, info: t.info_mubkhara, src: "models/mubkhara.glb" }
 };
 
 let discoveredCount = 0;
@@ -32,7 +33,6 @@ function startTour() {
   welcomeScreen.style.display = 'none';
   scanUi.style.display = 'flex';
   
-  // إخفاء زر اللغة عند بدء الجولة
   const langBtn = document.querySelector('.welcome-lang-btn');
   if (langBtn) langBtn.style.display = 'none';
   
@@ -41,14 +41,15 @@ function startTour() {
 }
 
 function initAR() {
-  // تم تعديل الماركر الأول إلى marker0 ومسار الـ patt الخاص به
+  // حقن مشهد MindAR واستدعاء ملف targets.mind الذي يجمع الصور الأربع
   arjsWrapper.innerHTML = `
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false">
-      <a-marker type="pattern" url="markers/marker0.patt" id="marker0"></a-marker>
-      <a-marker type="pattern" url="markers/5dallah-marker.patt" id="dallah-marker"></a-marker>
-      <a-marker type="pattern" url="markers/5sword-marker.patt" id="sword-marker"></a-marker>
-      <a-marker type="pattern" url="markers/5mubkhara-marker.patt" id="mubkhara-marker"></a-marker>
-      <a-entity camera></a-entity>
+    <a-scene mindar-image="imageTargetSrc: markers/targets.mind; autoStart: true; uiScanning: no;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+      
+      <a-entity mindar-image-target="targetIndex: 0" id="marker0"></a-entity>
+      <a-entity mindar-image-target="targetIndex: 1" id="marker1"></a-entity>
+      <a-entity mindar-image-target="targetIndex: 2" id="marker2"></a-entity>
+      <a-entity mindar-image-target="targetIndex: 3" id="marker3"></a-entity>
     </a-scene>
   `;
   
@@ -56,7 +57,8 @@ function initAR() {
     Object.keys(ARTIFACTS_MAP).forEach(markerId => {
       const markerEl = document.getElementById(markerId);
       if (markerEl) {
-        markerEl.addEventListener('markerFound', () => onMarkerFound(markerId));
+        // في MindAR الحدث اسمه targetFound بدلاً من markerFound
+        markerEl.addEventListener('targetFound', () => onMarkerFound(markerId));
       }
     });
   }, 1000);

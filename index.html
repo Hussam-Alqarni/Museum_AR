@@ -16,8 +16,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;500;600;700&family=Tajawal:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 
-  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/aframe/build/aframe-ar.js"></script>
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
   <script type="module" src="https://unpkg.com/@google/model-viewer@3.4.0/dist/model-viewer.min.js"></script>
 
   <style>
@@ -28,6 +28,8 @@
     .spinner { width: 50px; height: 50px; border: 4px solid rgba(209, 177, 90, 0.2); border-top-color: #d1b15a; border-radius: 50%; animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .version-badge { text-align: center; font-family: monospace, sans-serif; font-size: 0.75rem; color: rgba(255, 255, 255, 0.15); margin-top: 5px; pointer-events: none; }
+    /* إخفاء واجهة MindAR الافتراضية للاعتماد على واجهتنا */
+    .mindar-ui-overlay { display: none !important; }
   </style>
 </head>
 <body>
@@ -64,7 +66,7 @@
         </div>
 
         <button type="button" id="btn-start" class="btn-primary" data-i18n="btn_start_cam">افتح الكاميرا وابدأ الجولة</button>
-        <div class="version-badge">v1.2</div>
+        <div class="version-badge">v1.3 (MindAR)</div>
       </div>
     </section>
 
@@ -95,13 +97,6 @@
         <button id="btn-next" class="btn-primary" data-i18n="continue_search">متابعة البحث</button>
         <a href="museum.html" class="btn-secondary" data-i18n="skip_tour">تخطي وبناء متحفك الخاص</a>
       </div>
-    </div>
-
-    <div id="done-screen">
-      <h2 id="done-title-done" data-i18n="done_title">اكتملت المجموعة!</h2>
-      <p class="done-copy" data-i18n="done_desc">لقد استكشفت جميع القطع الأثرية بنجاح.</p>
-      <a href="museum.html" class="btn-primary" data-i18n="enter_museum" style="text-decoration: none; text-align: center; display: inline-block; margin-top: 1.5rem; padding: 1rem 2rem;">دخول المتحف الخاص</a>
-      <button id="btn-restart-tour" class="top-back-btn" data-i18n="restart_tour" style="background: transparent; border:none; margin-top: 20px;">إعادة الجولة</button>
     </div>
 
     <div id="arjs-scene-wrapper"></div>
