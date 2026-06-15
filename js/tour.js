@@ -1,7 +1,7 @@
 const t = window.translations[window.currentLang];
 
 const ARTIFACTS_MAP = {
-  "tent-marker": { id: "tent", name: t.tent, info: t.info_tent, src: "models/arabic_tent.glb" },
+  "marker1": { id: "tent", name: t.tent, info: t.info_tent, src: "models/arabic_tent.glb" },
   "dallah-marker": { id: "dallah", name: t.dallah, info: t.info_dallah, src: "models/saudi_dallah.glb" },
   "sword-marker": { id: "sword", name: t.sword, info: t.info_sword, src: "models/arabic_sword.glb" },
   "mubkhara-marker": { id: "mubkhara", name: t.mubkhara, info: t.info_mubkhara, src: "models/mubkhara.glb" }
@@ -41,10 +41,10 @@ function startTour() {
 }
 
 function initAR() {
-  // 💡 تم تعديل أسماء ملفات patt هنا بناءً على طلبك
+  // تم تعديل الماركر الأول إلى marker1 ومسار الـ patt الخاص به بناءً على طلبك
   arjsWrapper.innerHTML = `
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false">
-      <a-marker type="pattern" url="markers/5tent-marker.patt" id="tent-marker"></a-marker>
+      <a-marker type="pattern" url="markers/marker1.patt" id="marker1"></a-marker>
       <a-marker type="pattern" url="markers/5dallah-marker.patt" id="dallah-marker"></a-marker>
       <a-marker type="pattern" url="markers/5sword-marker.patt" id="sword-marker"></a-marker>
       <a-marker type="pattern" url="markers/5mubkhara-marker.patt" id="mubkhara-marker"></a-marker>
