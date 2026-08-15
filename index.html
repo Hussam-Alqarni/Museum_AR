@@ -47,6 +47,7 @@
           <h1 data-i18n="tour_h1">قطع تراث أمام عدستك</h1>
           <div class="welcome-rule" aria-hidden="true"></div>
           <p class="welcome-lead" data-i18n="tour_lead">أربع وقفات: <strong>خيمة</strong>، <strong>دلة</strong>، <strong>سيف</strong>، وأخيراً <strong>مبخرة</strong>.</p>
+          <p class="welcome-note" data-i18n="site_about">متحف افتراضي بتقنيات حديثة: <strong>واقع معزّز (AR)</strong> ومجسمات <strong>ثلاثية الأبعاد (3D)</strong>. يُفضّل استخدام <strong>هاتف أندرويد</strong> لضمان أفضل جودة للتجربة.</p>
         </header>
 
         <div class="welcome-block">
@@ -73,7 +74,21 @@
       <div id="hint-scan" data-i18n="scan_hint" style="position:absolute; top:80px; width:100%; text-align:center; color:white; font-family:'Tajawal'; font-weight:bold; pointer-events:none;">
         ابحث عن أي ماركر لعرض القطعة...
       </div>
+      <button type="button" id="btn-no-marker" class="no-marker-btn" data-i18n="no_marker_btn">تجاوز الماركرات وعرض التحف</button>
       <a href="museum.html" class="skip-tour-btn" data-i18n="skip_tour">تخطي وبناء متحفك الخاص</a>
+    </div>
+
+    <div id="artifact-picker">
+      <div class="picker-inner">
+        <h2 data-i18n="picker_title">اختر قطعة لعرضها</h2>
+        <div class="picker-grid">
+          <button type="button" class="picker-item" data-marker="marker0"><img src="markers/marker0.png" alt="الخيمة" /><span data-i18n="tent">الخيمة</span></button>
+          <button type="button" class="picker-item" data-marker="marker1"><img src="markers/marker1.png" alt="الدلة" /><span data-i18n="dallah">الدلة</span></button>
+          <button type="button" class="picker-item" data-marker="marker2"><img src="markers/marker2.png" alt="السيف" /><span data-i18n="sword">السيف</span></button>
+          <button type="button" class="picker-item" data-marker="marker3"><img src="markers/marker3.png" alt="المبخرة" /><span data-i18n="mubkhara">المبخرة</span></button>
+        </div>
+        <button type="button" id="btn-picker-close" class="btn-secondary" data-i18n="picker_close">إغلاق</button>
+      </div>
     </div>
 
     <div id="model-360-view">
