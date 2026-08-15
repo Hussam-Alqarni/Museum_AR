@@ -23,6 +23,20 @@ document.getElementById('btn-back-scan').addEventListener('click', backToScan);
 document.getElementById('btn-next').addEventListener('click', backToScan);
 document.getElementById('btn-restart-tour').addEventListener('click', restartTour);
 
+const artifactPicker = document.getElementById('artifact-picker');
+document.getElementById('btn-no-marker').addEventListener('click', () => {
+  artifactPicker.style.display = 'flex';
+});
+document.getElementById('btn-picker-close').addEventListener('click', () => {
+  artifactPicker.style.display = 'none';
+});
+document.querySelectorAll('.picker-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    artifactPicker.style.display = 'none';
+    onMarkerFound(btn.dataset.marker);
+  });
+});
+
 function updateCounterUI() {
   counterBadge.innerText = `${t.discovered} ${discoveredCount} / 4`;
   if (discoveredCount > 0) counterBadge.style.display = 'block';
